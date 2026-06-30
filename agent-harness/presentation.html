@@ -203,10 +203,6 @@ ul.warn li::before { content: '⚠'; color: var(--red); }
 .flag { padding: 8px 14px; border-radius: 6px; background: rgba(248,81,73,0.1); border-left: 3px solid var(--red); font-size: 0.84rem; margin-bottom: 6px; }
 .flag::before { content: '⚠ '; color: var(--red); }
 
-/* ── INTERVIEW BULLETS ── */
-.i-bullet { padding: 10px 14px 10px 30px; border-radius: 6px; background: var(--dark3); border: 1px solid var(--border); font-size: 0.84rem; margin-bottom: 7px; position: relative; color: var(--text); line-height: 1.4; }
-.i-bullet::before { content: '"'; position: absolute; left: 10px; color: var(--blue); font-size: 1.1rem; font-weight: 700; line-height: 1.5; }
-
 /* ── CODE ── */
 code { font-family: 'SF Mono', 'Cascadia Code', monospace; font-size: 0.82em; background: var(--dark3); border: 1px solid var(--border); border-radius: 4px; padding: 1px 6px; }
 
@@ -781,22 +777,7 @@ tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
 </div>
 
 <!-- ─────────────────────────────────────────────
-     25. INTERVIEW TALKING POINTS
-───────────────────────────────────────────── -->
-<div class="slide dark2 vcenter">
-    <div class="label blue">Interview Prep</div>
-    <h2 class="slide-title" style="margin-bottom:18px;">Talking Points</h2>
-    <div class="i-bullet">Most agent failures are harness failures. I start by auditing the configuration, not the model.</div>
-    <div class="i-bullet">Verification is the high-leverage skill now. Generation is commoditized. I have a review system, not just a generation workflow.</div>
-    <div class="i-bullet">The 80% problem is real — I keep humans in the loop for edge cases and integration seams.</div>
-    <div class="i-bullet">My PR review framework: blast radius × lifespan × knowledge distribution. I tier effort based on consequence.</div>
-    <div class="i-bullet">Every agent mistake is a permanent signal — I apply the Ratchet Principle to harden config incrementally.</div>
-    <div class="i-bullet">Tests written before generation are the specification. I use heterogeneous reviewers because they catch different things 93.4% of the time.</div>
-    <div class="i-bullet">Context engineering is an architectural decision. I version the static/dynamic boundary alongside application code.</div>
-</div>
-
-<!-- ─────────────────────────────────────────────
-     26. CLOSING
+     25. CLOSING
 ───────────────────────────────────────────── -->
 <div class="slide dark-blue center">
     <div>
