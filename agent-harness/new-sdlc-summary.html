@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The New SDLC With Vibe Coding — Summary</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #202124;
+      line-height: 1.65;
+    }
+
+    /* ─────────────────────────────────────
+       TOGGLE BUTTON (always visible)
+    ───────────────────────────────────── */
+    #mode-toggle {
+      position: fixed;
+      top: 16px;
+      right: 20px;
+      z-index: 9999;
+      background: #1a73e8;
+      color: white;
+      border: none;
+      border-radius: 24px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(26,115,232,0.4);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      transition: background 0.2s;
+    }
+    #mode-toggle:hover { background: #1557b0; }
+    #mode-toggle svg { width: 15px; height: 15px; fill: currentColor; }
+
+    /* ─────────────────────────────────────
+       WEB MODE
+    ───────────────────────────────────── */
+    #web-view { display: block; }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%);
+      color: white;
+      padding: 72px 48px 64px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      right: -80px; bottom: -80px;
+      width: 360px; height: 360px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 50%;
+    }
+    .hero-eyebrow {
+      font-size: 12px; font-weight: 600;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      opacity: 0.75; margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(28px,4vw,48px);
+      font-weight: 700; line-height: 1.15; margin-bottom: 16px;
+    }
+    .hero-sub { font-size: 18px; opacity: 0.85; max-width: 640px; margin-bottom: 28px; }
+    .hero-meta { display: flex; gap: 24px; flex-wrap: wrap; font-size: 13px; opacity: 0.7; }
+
+    /* ── LAYOUT ── */
+    .container { max-width: 900px; margin: 0 auto; padding: 0 24px 80px; }
+
+    /* ── STATS BAR ── */
+    .stats-bar {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 1px; background: #e0e0e0;
+      border-radius: 12px; overflow: hidden;
+      margin: 40px 0; box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+    }
+    .stat { background: white; padding: 24px 20px; text-align: center; }
+    .stat-num { font-size: 36px; font-weight: 700; color: #1a73e8; line-height: 1; margin-bottom: 6px; }
+    .stat-label { font-size: 13px; color: #5f6368; }
+
+    /* ── SECTIONS ── */
+    .section {
+      background: white; border-radius: 12px;
+      padding: 40px; margin-bottom: 28px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+    }
+    .section-tag {
+      display: inline-block; font-size: 11px; font-weight: 700;
+      letter-spacing: 1.2px; text-transform: uppercase;
+      color: #1a73e8; margin-bottom: 10px;
+    }
+    .section h2 { font-size: 22px; font-weight: 700; margin-bottom: 16px; color: #202124; }
+    .section h3 { font-size: 16px; font-weight: 600; margin: 24px 0 10px; color: #202124; }
+    .section p { color: #3c4043; margin-bottom: 14px; }
+
+    /* ── PULLQUOTE ── */
+    .pullquote {
+      border-left: 4px solid #1a73e8; padding: 16px 24px;
+      margin: 24px 0; background: #f0f4ff; border-radius: 0 8px 8px 0;
+      font-size: 16px; font-style: italic; color: #1a0d6b; line-height: 1.6;
+    }
+
+    /* ── SPECTRUM TABLE ── */
+    .spectrum-table { width: 100%; border-collapse: collapse; font-size: 13.5px; margin: 20px 0; }
+    .spectrum-table th { background: #f1f3f4; padding: 10px 14px; text-align: left; font-weight: 600; border-bottom: 2px solid #e0e0e0; }
+    .spectrum-table th:nth-child(2) { background: #fff3e0; }
+    .spectrum-table th:nth-child(3) { background: #e8f5e9; }
+    .spectrum-table th:nth-child(4) { background: #e3f2fd; }
+    .spectrum-table td { padding: 10px 14px; border-bottom: 1px solid #f1f3f4; vertical-align: top; }
+    .spectrum-table tr:last-child td { border-bottom: none; }
+    .spectrum-table td:first-child { font-weight: 600; color: #5f6368; font-size: 12px; }
+
+    /* ── SPECTRUM BAR ── */
+    .spectrum-visual { display: flex; align-items: stretch; border-radius: 8px; overflow: hidden; margin: 20px 0; font-size: 13px; font-weight: 600; }
+    .spec-vibe { background: #fce8e6; color: #c5221f; padding: 14px 20px; flex: 1; }
+    .spec-mid  { background: #fef7e0; color: #b06000; padding: 14px 20px; flex: 1.4; text-align: center; }
+    .spec-agentic { background: #e6f4ea; color: #137333; padding: 14px 20px; flex: 1; text-align: right; }
+    .spec-label { font-size: 11px; font-weight: 400; opacity: 0.75; margin-top: 4px; }
+
+    /* ── PILL GRID ── */
+    .pill-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+    .pill { background: #f1f3f4; border-radius: 20px; padding: 6px 16px; font-size: 13px; font-weight: 500; color: #3c4043; }
+    .pill.blue { background: #e8f0fe; color: #1a73e8; }
+    .pill.green { background: #e6f4ea; color: #137333; }
+
+    /* ── NUMBERED LIST ── */
+    .num-list { list-style: none; counter-reset: steps; margin: 16px 0; }
+    .num-list li { counter-increment: steps; display: flex; gap: 16px; margin-bottom: 16px; align-items: flex-start; }
+    .num-list li::before {
+      content: counter(steps);
+      background: #1a73e8; color: white; border-radius: 50%;
+      min-width: 26px; height: 26px; display: flex;
+      align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .num-list li p { margin: 0; }
+    .num-list li strong { display: block; margin-bottom: 2px; }
+
+    /* ── EQUATION ── */
+    .equation {
+      background: #1a73e8; color: white; text-align: center;
+      padding: 24px; border-radius: 10px;
+      font-size: 22px; font-weight: 700; letter-spacing: 1px; margin: 20px 0;
+    }
+
+    /* ── TWO-COL ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+    .card { background: #f8f9fa; border-radius: 10px; padding: 20px; border: 1px solid #e8eaed; }
+    .card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+    .card.red h4 { color: #c5221f; }
+    .card.green h4 { color: #137333; }
+    .card ul { padding-left: 18px; font-size: 13.5px; color: #3c4043; }
+    .card ul li { margin-bottom: 6px; }
+
+    /* ── SDLC PHASE TABLE ── */
+    .phase-grid { display: flex; flex-direction: column; gap: 12px; margin: 16px 0; }
+    .phase-row { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 12px; align-items: start; font-size: 13.5px; }
+    .phase-row-head { display: grid; grid-template-columns: 120px 1fr 1fr; gap: 12px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #5f6368; padding-bottom: 6px; border-bottom: 1px solid #e0e0e0; }
+    .phase-name { font-weight: 700; color: #1a73e8; font-size: 13px; }
+    .phase-traditional { color: #5f6368; }
+    .phase-ai { color: #137333; }
+
+    /* ── HARNESS GRID ── */
+    .harness-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .harness-item { background: #f8f9fa; border-radius: 8px; padding: 16px; border-left: 3px solid #1a73e8; }
+    .harness-item strong { display: block; margin-bottom: 4px; font-size: 13px; }
+    .harness-item p { font-size: 13px; color: #5f6368; margin: 0; }
+
+    /* ── ACTION LISTS ── */
+    .action-section { margin-bottom: 28px; }
+    .action-section h3 { font-size: 14px; font-weight: 700; color: #5f6368; text-transform: uppercase; letter-spacing: 0.8px; margin-bottom: 12px; }
+
+    /* ── PRINCIPLES ── */
+    .principles { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+    .principle { display: flex; gap: 16px; align-items: flex-start; }
+    .principle-num { font-size: 28px; font-weight: 800; color: #e8eaed; line-height: 1; flex-shrink: 0; width: 36px; }
+    .principle-body strong { display: block; margin-bottom: 4px; font-size: 15px; }
+    .principle-body p { font-size: 14px; color: #5f6368; margin: 0; }
+
+    /* ── FOOTER ── */
+    .doc-footer { text-align: center; padding: 32px; font-size: 13px; color: #9aa0a6; border-top: 1px solid #e0e0e0; margin-top: 40px; }
+
+
+    /* ─────────────────────────────────────
+       PRESENTATION MODE
+    ───────────────────────────────────── */
+    #pres-view {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: #0d1b2a;
+      z-index: 1000;
+      flex-direction: column;
+    }
+    body.pres-mode #pres-view { display: flex; }
+    body.pres-mode #web-view  { display: none; }
+    body.pres-mode #mode-toggle {
+      background: rgba(255,255,255,0.12);
+      box-shadow: none;
+      border: 1px solid rgba(255,255,255,0.2);
+    }
+    body.pres-mode #mode-toggle:hover { background: rgba(255,255,255,0.22); }
+
+    /* slide deck */
+    #slide-track {
+      flex: 1;
+      overflow: hidden;
+      position: relative;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+      padding: 56px 72px 56px;
+      opacity: 0;
+      pointer-events: none;
+      transform: translateX(40px);
+      transition: opacity 0.28s ease, transform 0.28s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
+    }
+    .slide.active {
+      opacity: 1;
+      pointer-events: auto;
+      transform: translateX(0);
+    }
+    .slide.leaving {
+      opacity: 0;
+      transform: translateX(-40px);
+    }
+
+    /* slide type colours */
+    .slide-title  { background: linear-gradient(135deg, #1a73e8 0%, #0d47a1 100%); }
+    .slide-stats  { background: #0d1b2a; }
+    .slide-main   { background: #111d2b; }
+    .slide-dark   { background: #0a1520; }
+
+    /* slide typography */
+    .slide .s-eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; margin-bottom: 16px;
+      color: rgba(255,255,255,0.5);
+    }
+    .slide .s-h1 { font-size: clamp(30px,4vw,52px); font-weight: 800; color: white; line-height: 1.1; margin-bottom: 20px; }
+    .slide .s-h2 { font-size: clamp(22px,3vw,36px); font-weight: 700; color: white; line-height: 1.15; margin-bottom: 20px; }
+    .slide .s-h3 { font-size: 16px; font-weight: 600; color: rgba(255,255,255,0.9); margin: 24px 0 12px; }
+    .slide .s-lead { font-size: clamp(15px,2vw,19px); color: rgba(255,255,255,0.8); line-height: 1.6; max-width: 780px; margin-bottom: 20px; }
+    .slide .s-body { font-size: 14px; color: rgba(255,255,255,0.7); line-height: 1.65; max-width: 840px; margin-bottom: 14px; }
+    .slide .s-quote {
+      border-left: 4px solid #4fc3f7; padding: 16px 24px;
+      background: rgba(79,195,247,0.1); border-radius: 0 8px 8px 0;
+      font-size: 17px; font-style: italic; color: #e3f2fd; line-height: 1.6; margin: 20px 0;
+    }
+    .slide .s-big {
+      font-size: clamp(40px,7vw,90px); font-weight: 800; color: #4fc3f7;
+      line-height: 1; margin-bottom: 8px;
+    }
+    .slide .s-kicker { font-size: 13px; color: rgba(255,255,255,0.55); }
+
+    /* stat grid in slides */
+    .s-stat-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin: 28px 0; }
+    .s-stat { text-align: center; }
+    .s-stat .num { font-size: 52px; font-weight: 800; color: #4fc3f7; line-height: 1; }
+    .s-stat .lbl { font-size: 13px; color: rgba(255,255,255,0.6); margin-top: 6px; }
+
+    /* slide pills */
+    .s-pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 16px 0; }
+    .s-pill {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 20px; padding: 6px 18px; font-size: 13px; color: rgba(255,255,255,0.85);
+    }
+    .s-pill.blue { background: rgba(79,195,247,0.15); border-color: rgba(79,195,247,0.3); color: #b3e5fc; }
+    .s-pill.green { background: rgba(105,240,174,0.1); border-color: rgba(105,240,174,0.25); color: #b9f6ca; }
+    .s-pill.red { background: rgba(255,138,128,0.1); border-color: rgba(255,138,128,0.25); color: #ffcdd2; }
+
+    /* slide two-col */
+    .s-two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin: 20px 0; }
+    .s-card { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 20px; }
+    .s-card h4 { font-size: 14px; font-weight: 700; margin-bottom: 10px; color: white; }
+    .s-card h4.blue { color: #4fc3f7; }
+    .s-card h4.green { color: #69f0ae; }
+    .s-card h4.red { color: #ff8a80; }
+    .s-card ul { padding-left: 18px; font-size: 13px; color: rgba(255,255,255,0.7); }
+    .s-card ul li { margin-bottom: 6px; }
+
+    /* slide spectrum */
+    .s-spectrum { display: flex; border-radius: 8px; overflow: hidden; margin: 20px 0; }
+    .s-spec-vibe { background: rgba(255,138,128,0.2); color: #ff8a80; padding: 16px 20px; flex: 1; }
+    .s-spec-mid  { background: rgba(255,213,79,0.15); color: #ffd54f; padding: 16px 20px; flex: 1.3; text-align: center; }
+    .s-spec-ag   { background: rgba(105,240,174,0.15); color: #69f0ae; padding: 16px 20px; flex: 1; text-align: right; }
+    .s-spec-lbl { font-size: 11px; opacity: 0.7; margin-top: 4px; font-weight: 400; }
+    .s-spec-name { font-weight: 700; font-size: 14px; }
+
+    /* slide equation */
+    .s-equation {
+      background: rgba(79,195,247,0.15); border: 2px solid rgba(79,195,247,0.3);
+      color: #4fc3f7; text-align: center; padding: 24px;
+      border-radius: 10px; font-size: 26px; font-weight: 800; letter-spacing: 1px; margin: 20px 0;
+    }
+
+    /* slide numbered list */
+    .s-num-list { list-style: none; counter-reset: s; margin: 12px 0; }
+    .s-num-list li { counter-increment: s; display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+    .s-num-list li::before {
+      content: counter(s); background: #1a73e8; color: white;
+      border-radius: 50%; min-width: 24px; height: 24px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0; margin-top: 1px;
+    }
+    .s-num-list li .txt { font-size: 13.5px; color: rgba(255,255,255,0.8); }
+    .s-num-list li strong { color: white; display: block; margin-bottom: 2px; }
+
+    /* slide harness grid */
+    .s-harness { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 16px 0; }
+    .s-h-item { background: rgba(255,255,255,0.05); border-left: 3px solid #4fc3f7; border-radius: 0 8px 8px 0; padding: 14px 16px; }
+    .s-h-item strong { display: block; font-size: 13px; color: #b3e5fc; margin-bottom: 4px; }
+    .s-h-item p { font-size: 12px; color: rgba(255,255,255,0.55); margin: 0; }
+
+    /* slide phase table */
+    .s-phase-grid { display: flex; flex-direction: column; gap: 8px; margin: 12px 0; }
+    .s-phase-head { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 12px; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: rgba(255,255,255,0.4); padding-bottom: 6px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .s-phase-row { display: grid; grid-template-columns: 110px 1fr 1fr; gap: 12px; font-size: 12.5px; }
+    .s-phase-name { font-weight: 700; color: #4fc3f7; }
+    .s-phase-old { color: rgba(255,255,255,0.45); }
+    .s-phase-new { color: #b9f6ca; }
+
+    /* slide principles */
+    .s-principles { display: flex; flex-direction: column; gap: 20px; margin-top: 16px; }
+    .s-principle { display: flex; gap: 16px; }
+    .s-principle-num { font-size: 36px; font-weight: 900; color: rgba(255,255,255,0.1); line-height: 1; flex-shrink: 0; width: 40px; }
+    .s-principle-body strong { display: block; color: white; font-size: 15px; margin-bottom: 4px; }
+    .s-principle-body p { font-size: 13px; color: rgba(255,255,255,0.6); margin: 0; }
+
+    /* ── PRESENTER BAR ── */
+    #pres-bar {
+      display: flex; align-items: center; justify-content: center;
+      gap: 24px; padding: 14px 24px;
+      background: rgba(0,0,0,0.4); border-top: 1px solid rgba(255,255,255,0.08);
+      flex-shrink: 0;
+    }
+    .pres-nav {
+      background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.15);
+      color: white; width: 40px; height: 40px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px; transition: background 0.15s;
+    }
+    .pres-nav:hover { background: rgba(255,255,255,0.22); }
+    .pres-nav:disabled { opacity: 0.25; cursor: default; }
+    #slide-counter { font-size: 13px; color: rgba(255,255,255,0.5); min-width: 60px; text-align: center; }
+    #slide-progress {
+      flex: 1; max-width: 320px; height: 3px;
+      background: rgba(255,255,255,0.12); border-radius: 2px; overflow: hidden;
+    }
+    #slide-progress-fill {
+      height: 100%; background: #4fc3f7; border-radius: 2px;
+      transition: width 0.28s ease;
+    }
+
+    /* scrollbar in slides */
+    .slide::-webkit-scrollbar { width: 5px; }
+    .slide::-webkit-scrollbar-track { background: transparent; }
+    .slide::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 4px; }
+
+    @media (max-width: 640px) {
+      .slide { padding: 32px 24px; }
+      .s-stat-row, .s-two-col, .s-harness { grid-template-columns: 1fr; }
+      .s-phase-head div:nth-child(2), .s-phase-row .s-phase-old { display: none; }
+      .s-phase-head, .s-phase-row { grid-template-columns: 100px 1fr; }
+      .two-col, .harness-grid { grid-template-columns: 1fr; }
+      .phase-row, .phase-row-head { grid-template-columns: 90px 1fr; }
+      .phase-row .phase-traditional, .phase-row-head div:nth-child(2) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── TOGGLE BUTTON ── -->
+<button id="mode-toggle" onclick="toggleMode()">
+  <svg id="toggle-icon" viewBox="0 0 24 24"><path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/></svg>
+  <span id="toggle-label">Present</span>
+</button>
+
+
+<!-- ══════════════════════════════════════
+     WEB VIEW
+══════════════════════════════════════ -->
+<div id="web-view">
+
+  <div class="hero">
+    <div class="hero-eyebrow">Google Whitepaper + Author Blog Post — Summary</div>
+    <h1>The New SDLC With Vibe Coding</h1>
+    <p class="hero-sub">From ad-hoc prompting to Agentic Engineering — how AI is restructuring every phase of software development.</p>
+    <div class="hero-meta">
+      <span>Authors: Addy Osmani, Shubham Saboo, Sokratis Kartakis</span>
+      <span>Google / Kaggle &bull; May 2026</span>
+    </div>
+  </div>
+
+  <div class="container">
+
+    <div class="stats-bar">
+      <div class="stat"><div class="stat-num">85%</div><div class="stat-label">of professional developers regularly use AI coding agents</div></div>
+      <div class="stat"><div class="stat-num">51%</div><div class="stat-label">use AI coding tools daily</div></div>
+      <div class="stat"><div class="stat-num">41%</div><div class="stat-label">of all new code is now AI-generated</div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">The Big Idea</div>
+      <h2>The Shift from Syntax to Intent</h2>
+      <div class="pullquote">"The most profound shift in software engineering isn't a new language, framework, or cloud service. It's the transition from writing code to expressing intent, and trusting intelligent systems to translate that intent into working software."</div>
+      <p>For decades, developers translated human intent into machine-readable syntax. That translation layer is collapsing. AI evolved from autocomplete (~2021) → inline suggestions (~2022) → chat-based generation (~2023) → coding agents (~2024–25) → fully autonomous agents (~2025–26) that clone repos, plan multi-file changes, run tests, and submit PRs without a human typing a single line.</p>
+      <p>The implications are profound but uneven. Implementation that once took weeks now takes hours. Requirements, architecture, and verification remain stubbornly human-paced. The result is not a faster version of the old SDLC — it is a fundamentally different workflow.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">Core Framework</div>
+      <h2>The Spectrum: Vibe Coding → Agentic Engineering</h2>
+      <p>The key differentiator is <strong>not whether you use AI</strong> — it's how much structure, verification, and human judgment surrounds the AI's output.</p>
+      <div class="spectrum-visual">
+        <div class="spec-vibe">Vibe Coding<div class="spec-label">Casual prompts<br>"Does it seem to work?"<br>Disposable code</div></div>
+        <div class="spec-mid">Structured AI-Assisted<div class="spec-label">Detailed prompts + constraints<br>Manual testing + spot checks<br>Features in established codebases</div></div>
+        <div class="spec-agentic">Agentic Engineering<div class="spec-label">Formal specs + architecture docs<br>Automated evals + CI/CD gates<br>Production systems at scale</div></div>
+      </div>
+      <table class="spectrum-table">
+        <thead><tr><th>Dimension</th><th>Vibe Coding</th><th>Structured AI-Assisted</th><th>Agentic Engineering</th></tr></thead>
+        <tbody>
+          <tr><td>Intent specification</td><td>Casual natural language prompts</td><td>Detailed prompts with examples and constraints</td><td>Formal specs, architecture docs, memory files</td></tr>
+          <tr><td>Verification</td><td>"Does it seem to work?"</td><td>Manual testing, spot-checking</td><td>Automated test suites, CI/CD gates, LM judges</td></tr>
+          <tr><td>Error handling</td><td>Copy-paste error messages back to AI</td><td>Developer diagnoses root cause, AI implements fix</td><td>Agents self-diagnose within defined bounds; humans handle architectural issues</td></tr>
+          <tr><td>Appropriate scope</td><td>Prototypes, scripts, hackathons</td><td>Features within established codebases</td><td>Production systems, team-scale development</td></tr>
+          <tr><td>Risk profile</td><td>High; acceptable for disposable code</td><td>Moderate; human judgment at key checkpoints</td><td>Low; systematic verification at every stage</td></tr>
+        </tbody>
+      </table>
+      <p>The two verification mechanisms that separate agentic engineering from vibe coding: <strong>Tests</strong> verify deterministic parts. <strong>Evaluations (evals)</strong> verify non-deterministic parts — did the agent take the right trajectory of steps, choose the right tools, and meet the quality bar? Without both, the practice is always vibe coding, regardless of prompt sophistication.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">The Real Skill</div>
+      <h2>Context Engineering</h2>
+      <p>The quality of AI-generated code depends less on the cleverness of your prompts and more on the quality of the <em>context</em> provided. The question isn't "how do I trick the AI?" — it's "what would a new team member need to know to contribute effectively, and how do I encode that knowledge in a form the AI can use?"</p>
+      <h3>Six Types of Agent Context</h3>
+      <div class="pill-grid">
+        <span class="pill blue">Instructions — role, goals, boundaries</span>
+        <span class="pill blue">Knowledge — docs, diagrams, domain data</span>
+        <span class="pill blue">Memory — session logs &amp; persistent state</span>
+        <span class="pill blue">Examples — few-shot demos, reference patterns</span>
+        <span class="pill blue">Tools — APIs, scripts, external services</span>
+        <span class="pill blue">Guardrails — hard constraints, safety rules</span>
+      </div>
+      <h3>Static vs. Dynamic Context</h3>
+      <div class="two-col">
+        <div class="card">
+          <h4>Static Context (always loaded)</h4>
+          <ul><li>System instructions</li><li>Rule files (AGENTS.md, CLAUDE.md, GEMINI.md)</li><li>Global memory &amp; persona definitions</li><li>Core guardrails</li></ul>
+          <p style="font-size:12px;margin-top:10px;color:#5f6368;">Expensive but reliable. The agent never forgets these.</p>
+        </div>
+        <div class="card">
+          <h4>Dynamic Context (loaded on demand)</h4>
+          <ul><li>Agent Skills (triggered by task match)</li><li>Tool results (retrieved during execution)</li><li>RAG-retrieved documents</li><li>Windowed session history</li></ul>
+          <p style="font-size:12px;margin-top:10px;color:#5f6368;">Efficient and scalable. Pay only for what you use.</p>
+        </div>
+      </div>
+      <p>The design decision of what belongs in static versus dynamic context is a genuine engineering trade-off — reviewed in pull requests and versioned like code. Too much static context wastes tokens and dilutes signals. Too little means the agent forgets critical rules.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">How Each Phase Changes</div>
+      <h2>The New Software Development Life Cycle</h2>
+      <p>AI compresses the SDLC dramatically but unevenly. Iteration cycles collapse from weeks to minutes at the implementation layer; requirements, architecture, and verification remain stubbornly human-paced.</p>
+      <div class="phase-grid">
+        <div class="phase-row-head"><div>Phase</div><div>Traditional</div><div>AI-Driven</div></div>
+        <div class="phase-row"><div class="phase-name">Requirements</div><div class="phase-traditional">Documentation handed off between teams. 2–3 days per sprint.</div><div class="phase-ai">Real-time conversation produces spec and prototype simultaneously. Loop collapses to near zero.</div></div>
+        <div class="phase-row"><div class="phase-name">Architecture</div><div class="phase-traditional">Human-designed; 1–2 days of trade-off analysis.</div><div class="phase-ai">Most stubbornly human-centric phase. AI executes architectural decisions once made; developer role shifts to documenting structural choices.</div></div>
+        <div class="phase-row"><div class="phase-name">Implementation</div><div class="phase-traditional">1–3 weeks of human-typed code.</div><div class="phase-ai">Minutes to hours. 25–39% productivity gains, but METR study found experienced developers 19% slower when accounting for review time. Work shifts from writing to reviewing, guiding, and verifying.</div></div>
+        <div class="phase-row"><div class="phase-name">Testing &amp; QA</div><div class="phase-traditional">3–5 days. Separate phase.</div><div class="phase-ai">Continuous flywheel: benchmark → failure clustering → fixes → regression suite → production monitoring.</div></div>
+        <div class="phase-row"><div class="phase-name">Code Review</div><div class="phase-traditional">2–3 days. High cognitive burden.</div><div class="phase-ai">AI as first-pass reviewer (bugs, style, security). Human judgment still required for design and strategic alignment.</div></div>
+        <div class="phase-row"><div class="phase-name">Maintenance</div><div class="phase-traditional">"Too risky to touch."</div><div class="phase-ai">Newly tractable. Agents safely refactor legacy code and systematically address technical debt.</div></div>
+      </div>
+      <h3>The Factory Model</h3>
+      <p>The developer's primary output is not code — it's the <strong>system that produces code</strong>. A factory manager designs the assembly line; the modern developer designs the development system and ensures its output meets the required standard.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">What Surrounds the Model</div>
+      <h2>Harness Engineering</h2>
+      <div class="equation">Agent = Model + Harness</div>
+      <p>The model is the raw engine. The harness — prompts, tools, context policies, hooks, sandboxes, sub-agents, observability — is the car, the road, and the traffic laws. On Terminal Bench 2.0, one team moved from outside Top 30 to Top 5 by changing <em>only the harness</em>. A separate study raised a coding agent's score 13.7 points by tweaking only the system prompt, tools, and middleware — no model change at all.</p>
+      <p><strong>Most agent failures, examined honestly, are configuration failures</strong> — a missing tool, a vague rule, an absent guardrail, a context window stuffed with noise.</p>
+      <div class="harness-grid">
+        <div class="harness-item"><strong>Instructions &amp; Rule Files</strong><p>AGENTS.md, CLAUDE.md, GEMINI.md, skill files. Defines who the agent is and what it's forbidden from doing.</p></div>
+        <div class="harness-item"><strong>Tools</strong><p>Functions, MCP servers, and APIs the agent can call, plus prose that tells the model when and how to call them.</p></div>
+        <div class="harness-item"><strong>Sandboxes &amp; Execution Environments</strong><p>Where the agent's code actually runs, what it has access to, what it cannot reach.</p></div>
+        <div class="harness-item"><strong>Orchestration Logic</strong><p>Sub-agent spawning, model routing, hand-offs between specialists, and rules governing when each fires.</p></div>
+        <div class="harness-item"><strong>Guardrails &amp; Hooks</strong><p>Deterministic code at lifecycle points — before tool calls, after file edits, before commits. Things the agent should never forget but often does.</p></div>
+        <div class="harness-item"><strong>Observability</strong><p>Logs, traces, evaluations, cost and latency metering. Without observability, there is no way to tell if the agent is drifting.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">The Developer's Evolving Role</div>
+      <h2>Conductors and Orchestrators</h2>
+      <div class="two-col">
+        <div class="card">
+          <h4 style="color:#1a73e8;">Conductor Mode</h4>
+          <ul><li>Real-time, in-IDE, keystroke-level control</li><li>Immediate feedback, single-file scope</li><li>Tools: Copilot, Cursor, Windsurf, Gemini Code Assist</li><li>Best for: exploratory coding, debugging, unfamiliar codebases</li></ul>
+        </div>
+        <div class="card">
+          <h4 style="color:#137333;">Orchestrator Mode</h4>
+          <ul><li>Asynchronous, high-level, multi-agent</li><li>Goal-level control, multi-file scope</li><li>Tools: Claude Code, Google Jules, GitHub Copilot agent mode</li><li>Best for: feature implementations, migrations, test generation</li></ul>
+        </div>
+      </div>
+      <h3>The 80% Problem</h3>
+      <p>AI agents rapidly generate ~80% of a feature's code. The remaining 20% — edge cases, error handling, integration points, subtle correctness requirements — demands deep contextual knowledge that current models often lack. AI errors have evolved from syntax mistakes to more insidious conceptual failures that "look right" and may even pass basic tests.</p>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">Economics</div>
+      <h2>The Economics of AI Development</h2>
+      <p>The critical metric for engineering leaders is Total Cost of Ownership (TCO). In the AI era, OpEx is heavily dictated by the <strong>token economy</strong>. At the crossover point, vibe coding costs 3–10x more per feature in the long run.</p>
+      <div class="two-col">
+        <div class="card red">
+          <h4>Vibe Coding — Low CapEx, High OpEx</h4>
+          <ul><li>Token burn: expensive prompting loops, low first-pass success</li><li>Maintenance tax: AI-generated spaghetti code is days to debug</li><li>Security remediation: rapid code = rapid vulnerabilities</li></ul>
+        </div>
+        <div class="card green">
+          <h4>Agentic Engineering — High CapEx, Low OpEx</h4>
+          <ul><li>Upfront: API schemas, test suites, structured context</li><li>Low marginal cost per feature over time</li><li>Output is structurally sound, pre-tested, aligned to standards</li></ul>
+        </div>
+      </div>
+      <h3>Three Financial Levers</h3>
+      <div class="pill-grid">
+        <span class="pill green">Context engineering — high-signal payloads, fewer retries</span>
+        <span class="pill green">Dynamic context + skills — pay only for what you use</span>
+        <span class="pill green">Intelligent model routing — large models for complex tasks, small models for test gen / CI</span>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">Actionable Guidance</div>
+      <h2>Where to Start</h2>
+      <div class="action-section">
+        <h3>For Individual Developers</h3>
+        <ol class="num-list">
+          <li><p><strong>Set up AGENTS.md.</strong> Start with ten lines: stack, conventions, hard rules, workflow.</p></li>
+          <li><p><strong>Install Agent Skills</strong> for build, evaluate, deploy, and optimize workflows.</p></li>
+          <li><p><strong>Pick one repetitive workflow</strong> and make it your first agent. Building one end-to-end teaches more than reading about a hundred.</p></li>
+          <li><p><strong>Write tests and evals before generating the code.</strong> They communicate intent more precisely than any prompt.</p></li>
+          <li><p><strong>Review every line the agent produces</strong> that is going to ship. Be skeptical of anything that looks clever.</p></li>
+          <li><p><strong>Maintain your developer skills.</strong> Treat AI as a way to apply expertise at greater scale, not a substitute for it.</p></li>
+        </ol>
+      </div>
+      <div class="action-section">
+        <h3>For Engineering Leaders</h3>
+        <ol class="num-list">
+          <li><p><strong>Make context engineering a first-class practice.</strong> Treat AGENTS.md, eval suites, and skill libraries as code — reviewed in PRs, owned by named engineers.</p></li>
+          <li><p><strong>Set the bar at the eval, not the demo.</strong> Require eval coverage with explicit rubrics as a precondition for any agent shipping into a shared workflow.</p></li>
+          <li><p><strong>Re-shape code review for AI-generated code.</strong> Train reviewers on failure modes: hallucinated dependencies, inadequate error handling, subtle correctness gaps.</p></li>
+          <li><p><strong>Distinguish prototyping from production in team norms.</strong> Teams that keep this blurry produce prototypes that ship by accident.</p></li>
+          <li><p><strong>Invest in the harness as a shared team asset.</strong> Build it once, refine it many times.</p></li>
+        </ol>
+      </div>
+      <div class="action-section">
+        <h3>For Organizations</h3>
+        <ol class="num-list">
+          <li><p><strong>Treat AI-assisted development as an engineering investment.</strong> Speed without eval coverage and observability compounds into technical debt faster than any team can pay it down.</p></li>
+          <li><p><strong>Invest in the production substrate before scale.</strong> Trajectory evals in CI, traces of every agent run, scoped permissions per agent — build this before the first production agent ships.</p></li>
+          <li><p><strong>Adopt open standards.</strong> MCP for tool access and A2A for cross-agent delegation keep vendor options open and avoid re-platforming later.</p></li>
+          <li><p><strong>Plan for hybrid teams.</strong> Humans set direction, agents do implementation, clear handoff protocols govern the boundary.</p></li>
+          <li><p><strong>Reframe hiring around judgment.</strong> The most valuable engineers will be the ones who can direct agents well.</p></li>
+        </ol>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-tag">Conclusion</div>
+      <h2>Intent as the New Interface</h2>
+      <div class="principles">
+        <div class="principle">
+          <div class="principle-num">1</div>
+          <div class="principle-body"><strong>Structure scales, vibes don't.</strong><p>For production software, specifications, tests, guardrails, and human oversight of architecture are not optional. The gap between "it seems to work" and "it works correctly under all conditions" is where production outages live.</p></div>
+        </div>
+        <div class="principle">
+          <div class="principle-num">2</div>
+          <div class="principle-body"><strong>AI amplifies your engineering culture.</strong><p>Organizations with strong testing practices, clear architectural standards, and healthy code review get dramatically more value. AI is a force multiplier — and it multiplies both your strengths and your weaknesses.</p></div>
+        </div>
+        <div class="principle">
+          <div class="principle-num">3</div>
+          <div class="principle-body"><strong>The human role is evolving, not diminishing.</strong><p>Skills shift from implementation to judgment, from writing code to designing the systems that produce code. The builders who understand architecture and can evaluate output critically are more valuable than ever.</p></div>
+        </div>
+      </div>
+      <div class="pullquote" style="margin-top:32px;">"Generation is solved. Verification, judgment, and direction are the new craft."</div>
+    </div>
+
+  </div>
+
+  <div class="doc-footer">Summary of: <em>The New SDLC With Vibe Coding</em> (Google Whitepaper, May 2026) &amp; Addy Osmani's companion blog post.</div>
+</div><!-- /web-view -->
+
+
+<!-- ══════════════════════════════════════
+     PRESENTATION VIEW
+══════════════════════════════════════ -->
+<div id="pres-view">
+  <div id="slide-track">
+
+    <!-- SLIDE 0: Title -->
+    <div class="slide slide-title active">
+      <div class="s-eyebrow">Google Whitepaper &bull; May 2026</div>
+      <div class="s-h1">The New SDLC<br>With Vibe Coding</div>
+      <div class="s-lead">From ad-hoc prompting to Agentic Engineering — how AI is restructuring every phase of software development.</div>
+      <div class="s-lead" style="font-size:15px;opacity:0.65;margin-top:8px;">Addy Osmani, Shubham Saboo, Sokratis Kartakis</div>
+    </div>
+
+    <!-- SLIDE 1: Stats -->
+    <div class="slide slide-stats">
+      <div class="s-eyebrow">The State of Play — Early 2026</div>
+      <div class="s-h2">AI-Assisted Development Is Already the Default</div>
+      <div class="s-stat-row">
+        <div class="s-stat"><div class="num">85%</div><div class="lbl">of professional developers regularly use AI coding agents</div></div>
+        <div class="s-stat"><div class="num">51%</div><div class="lbl">use AI coding tools daily</div></div>
+        <div class="s-stat"><div class="num">41%</div><div class="lbl">of all new code is now AI-generated</div></div>
+      </div>
+      <div class="s-quote">"The era of syntax as interface is ending. The machine now handles implementation. The human provides intent, architecture, and judgment."</div>
+    </div>
+
+    <!-- SLIDE 2: Evolution -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">The Big Idea</div>
+      <div class="s-h2">The Shift from Syntax to Intent</div>
+      <div class="s-phase-grid" style="margin-top:20px;">
+        <div class="s-phase-head"><div>Era</div><div>Capability</div><div>Human Effort</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">~2021</div><div style="color:rgba(255,255,255,0.75)">Autocomplete — next token prediction</div><div class="s-phase-old">Maximum</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">~2022</div><div style="color:rgba(255,255,255,0.75)">Inline code suggestions — full functions from signatures</div><div class="s-phase-old">Very High</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">~2023</div><div style="color:rgba(255,255,255,0.75)">Chat-based generation — describe a feature, receive implementation</div><div class="s-phase-old">High</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">~2024–25</div><div style="color:rgba(255,255,255,0.75)">Coding agents — multi-file edits, tool calling, iterative self-correction</div><div class="s-phase-new">Medium</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">~2025–26</div><div style="color:rgba(255,255,255,0.75)">Autonomous agents — clone repos, plan architecture, execute, submit PRs</div><div class="s-phase-new">Direction only</div></div>
+      </div>
+      <div class="s-body" style="margin-top:20px;">Each generation preserved what came before while raising the ceiling on what one engineer could accomplish.</div>
+    </div>
+
+    <!-- SLIDE 3: The Spectrum -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">Core Framework</div>
+      <div class="s-h2">The Spectrum: Vibe Coding → Agentic Engineering</div>
+      <div class="s-lead" style="font-size:15px;">The key differentiator is <strong style="color:white;">not whether you use AI</strong> — it's how much structure, verification, and human judgment surrounds the output.</div>
+      <div class="s-spectrum">
+        <div class="s-spec-vibe"><div class="s-spec-name">Vibe Coding</div><div class="s-spec-lbl">Casual prompts<br>"Does it seem to work?"<br>Disposable code</div></div>
+        <div class="s-spec-mid"><div class="s-spec-name">Structured AI-Assisted</div><div class="s-spec-lbl">Detailed prompts + constraints<br>Manual testing + spot checks</div></div>
+        <div class="s-spec-ag"><div class="s-spec-name">Agentic Engineering</div><div class="s-spec-lbl">Formal specs + architecture docs<br>Automated evals + CI/CD gates</div></div>
+      </div>
+      <div class="s-two-col" style="margin-top:16px;">
+        <div class="s-card">
+          <h4>Vibe Coding is appropriate for:</h4>
+          <ul><li>Prototypes &amp; hackathons</li><li>Personal scripts</li><li>Exploring an idea</li><li>Throwaway code</li></ul>
+        </div>
+        <div class="s-card">
+          <h4 class="green">Agentic Engineering is required for:</h4>
+          <ul><li>Production systems</li><li>Team-scale development</li><li>Payment processing, auth, data pipelines</li><li>Any code your organization depends on</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <!-- SLIDE 4: Verification -->
+    <div class="slide slide-dark">
+      <div class="s-eyebrow">What Separates Them</div>
+      <div class="s-h2">The Two Verification Mechanisms</div>
+      <div class="s-two-col" style="margin-top:24px;">
+        <div class="s-card">
+          <h4 class="blue">Tests</h4>
+          <ul style="margin-top:8px;">
+            <li>Verify <strong style="color:white;">deterministic</strong> parts</li>
+            <li>Given this input → that output</li>
+            <li>Checked by code (CI/CD)</li>
+            <li>Necessary but not sufficient</li>
+          </ul>
+        </div>
+        <div class="s-card">
+          <h4 class="green">Evaluations (Evals)</h4>
+          <ul style="margin-top:8px;">
+            <li>Verify <strong style="color:white;">non-deterministic</strong> parts</li>
+            <li>Did the agent take the right trajectory?</li>
+            <li>Did it choose the right tools?</li>
+            <li>Checked by labelled datasets, scoring rubrics, LM judges</li>
+          </ul>
+        </div>
+      </div>
+      <div class="s-quote" style="margin-top:28px;">Without both tests and evals, the practice is always vibe coding — regardless of how sophisticated the prompts are.</div>
+      <div class="s-body">"Set the bar at the eval, not the demo. A working demo proves an agent can succeed once. A passing eval suite proves it succeeds reliably."</div>
+    </div>
+
+    <!-- SLIDE 5: Context Engineering -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">The Real Skill</div>
+      <div class="s-h2">Context Engineering</div>
+      <div class="s-lead" style="font-size:15px;">Quality of AI-generated code depends more on the <em>context</em> provided than on clever prompting. The question: "What would a new team member need to know to contribute effectively?"</div>
+      <div class="s-h3">Six Types of Agent Context</div>
+      <div class="s-pills">
+        <span class="s-pill blue">Instructions — role, goals, boundaries</span>
+        <span class="s-pill blue">Knowledge — docs, diagrams, domain data</span>
+        <span class="s-pill blue">Memory — session logs &amp; persistent state</span>
+        <span class="s-pill blue">Examples — few-shot demos, reference patterns</span>
+        <span class="s-pill blue">Tools — APIs, scripts, external services</span>
+        <span class="s-pill blue">Guardrails — hard constraints, safety rules</span>
+      </div>
+      <div class="s-two-col" style="margin-top:16px;">
+        <div class="s-card"><h4>Static Context</h4><ul><li>System instructions</li><li>Rule files (AGENTS.md, CLAUDE.md)</li><li>Global memory &amp; core guardrails</li></ul><p style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;">Expensive but reliable. The agent never forgets these.</p></div>
+        <div class="s-card"><h4 class="green">Dynamic Context</h4><ul><li>Agent Skills (triggered by task match)</li><li>Tool results (retrieved during execution)</li><li>RAG-retrieved documents</li></ul><p style="font-size:12px;color:rgba(255,255,255,0.4);margin-top:8px;">Efficient. Pay the token cost only when needed.</p></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 6: New SDLC -->
+    <div class="slide slide-dark">
+      <div class="s-eyebrow">How Each Phase Changes</div>
+      <div class="s-h2">The New Software Development Life Cycle</div>
+      <div class="s-phase-grid">
+        <div class="s-phase-head"><div>Phase</div><div>Traditional</div><div>AI-Driven</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Requirements</div><div class="s-phase-old">Documentation handoff. 2–3 days.</div><div class="s-phase-new">Real-time conversation → spec + prototype simultaneously.</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Architecture</div><div class="s-phase-old">Human-designed trade-off analysis. 1–2 days.</div><div class="s-phase-new">Most human-centric phase. AI executes decisions once made; developer documents them.</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Implementation</div><div class="s-phase-old">1–3 weeks of writing.</div><div class="s-phase-new">Minutes to hours. Work shifts from writing to reviewing, guiding, verifying.</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Testing &amp; QA</div><div class="s-phase-old">3–5 days. Separate phase.</div><div class="s-phase-new">Continuous flywheel: benchmark → failure clustering → fixes → regression suite.</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Code Review</div><div class="s-phase-old">2–3 days. High cognitive burden.</div><div class="s-phase-new">AI as first-pass reviewer. Human judgment for design &amp; strategic alignment.</div></div>
+        <div class="s-phase-row"><div class="s-phase-name">Maintenance</div><div class="s-phase-old">"Too risky to touch."</div><div class="s-phase-new">Newly tractable. Agents safely refactor legacy code; technical debt becomes addressable.</div></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 7: Factory Model -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">The Mental Model</div>
+      <div class="s-h2">The Factory Model</div>
+      <div class="s-lead" style="font-size:15px;">The developer's primary output is not code — it's the <strong style="color:white;">system that produces code</strong>. A factory manager designs the assembly line; the modern developer designs the development system.</div>
+      <div class="s-pills" style="margin-top:20px;">
+        <span class="s-pill">Specifications &amp; context that define what needs to be built</span>
+        <span class="s-pill">Agents that translate specifications into implementation</span>
+        <span class="s-pill">Tests &amp; quality gates that verify correctness</span>
+        <span class="s-pill">Feedback loops that route failures back to agents</span>
+        <span class="s-pill">Guardrails that constrain agents to safe, predictable behavior</span>
+      </div>
+      <div class="s-quote" style="margin-top:28px;">"Success comes from giving agents success criteria rather than step-by-step instructions, then letting them iterate."</div>
+    </div>
+
+    <!-- SLIDE 8: Harness -->
+    <div class="slide slide-dark">
+      <div class="s-eyebrow">What Surrounds the Model</div>
+      <div class="s-h2">Harness Engineering</div>
+      <div class="s-equation">Agent = Model + Harness</div>
+      <div class="s-body">The model is the raw engine. The harness is the car, the road, and the traffic laws. On Terminal Bench 2.0, one team moved from outside Top 30 to Top 5 by changing <em>only the harness</em>. No model change. A separate study raised a coding agent's score 13.7 points by tweaking only the system prompt, tools, and middleware.</div>
+      <div class="s-harness">
+        <div class="s-h-item"><strong>Instructions &amp; Rule Files</strong><p>AGENTS.md, CLAUDE.md, skill files. Defines identity and constraints.</p></div>
+        <div class="s-h-item"><strong>Tools</strong><p>Functions, MCP servers, APIs the agent can call.</p></div>
+        <div class="s-h-item"><strong>Sandboxes &amp; Execution</strong><p>Where code runs, what it has access to, what it cannot reach.</p></div>
+        <div class="s-h-item"><strong>Orchestration Logic</strong><p>Sub-agent spawning, model routing, hand-offs between specialists.</p></div>
+        <div class="s-h-item"><strong>Guardrails &amp; Hooks</strong><p>Deterministic code at lifecycle points. Things the agent should never forget but often does.</p></div>
+        <div class="s-h-item"><strong>Observability</strong><p>Logs, traces, evaluations, cost metering. Without it, you can't tell if the agent is drifting.</p></div>
+      </div>
+    </div>
+
+    <!-- SLIDE 9: Conductor / Orchestrator -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">The Developer's Evolving Role</div>
+      <div class="s-h2">Conductors and Orchestrators</div>
+      <div class="s-two-col" style="margin-top:24px;">
+        <div class="s-card">
+          <h4 class="blue">Conductor Mode</h4>
+          <ul><li>Real-time, in-IDE, keystroke-level control</li><li>Immediate feedback, single-file scope</li><li>Developer always in the loop</li><li>Tools: Copilot, Cursor, Windsurf</li><li>Best for: exploratory coding, debugging, unfamiliar codebases</li></ul>
+        </div>
+        <div class="s-card">
+          <h4 class="green">Orchestrator Mode</h4>
+          <ul><li>Asynchronous, high-level, multi-agent</li><li>Goal-level control; reviews outcomes not keystrokes</li><li>Multi-file scope; agents work in background</li><li>Tools: Claude Code, Jules, GitHub Copilot agent mode</li><li>Best for: feature impl., migrations, test generation</li></ul>
+        </div>
+      </div>
+      <div class="s-h3">The 80% Problem</div>
+      <div class="s-body">AI rapidly generates ~80% of a feature. The remaining 20% — edge cases, integration points, subtle correctness — demands contextual knowledge models often lack. Errors have evolved from syntax mistakes to conceptual failures that "look right" and may even pass basic tests.</div>
+    </div>
+
+    <!-- SLIDE 10: Economics -->
+    <div class="slide slide-dark">
+      <div class="s-eyebrow">Economics</div>
+      <div class="s-h2">The True Cost of AI Development</div>
+      <div class="s-lead" style="font-size:15px;">The real metric is Total Cost of Ownership, not velocity. In the AI era, OpEx is driven by the <strong style="color:white;">token economy</strong>.</div>
+      <div class="s-two-col" style="margin-top:16px;">
+        <div class="s-card">
+          <h4 class="red">Vibe Coding — Low CapEx, High OpEx</h4>
+          <ul><li>Token burn: expensive prompting loops, low first-pass success</li><li>Maintenance tax: debugging AI "spaghetti" code</li><li>Security remediation: rapid code = rapid vulnerabilities</li><li>Crossover: costs 3–10x more per feature long-term</li></ul>
+        </div>
+        <div class="s-card">
+          <h4 class="green">Agentic Engineering — High CapEx, Low OpEx</h4>
+          <ul><li>Upfront: API schemas, test suites, structured context</li><li>Low marginal cost per feature over time</li><li>Output is structurally sound, pre-tested, aligned to standards</li><li>Economically sustainable for mature codebases</li></ul>
+        </div>
+      </div>
+      <div class="s-h3">Three Financial Levers</div>
+      <div class="s-pills">
+        <span class="s-pill green">Context engineering — high-signal payloads, fewer retries</span>
+        <span class="s-pill green">Dynamic context + skills — pay only for what you use</span>
+        <span class="s-pill green">Intelligent model routing — big models for complex tasks, small models for CI/test gen</span>
+      </div>
+    </div>
+
+    <!-- SLIDE 11: Where to Start -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">Actionable Guidance</div>
+      <div class="s-h2">Where to Start: Individual Developers</div>
+      <ol class="s-num-list">
+        <li><div class="txt"><strong>Set up AGENTS.md.</strong> Start with ten lines: stack, conventions, hard rules, workflow. Add a rule every time the agent does something it should not do again.</div></li>
+        <li><div class="txt"><strong>Install Agent Skills</strong> for build, evaluate, deploy, and optimize workflows.</div></li>
+        <li><div class="txt"><strong>Pick one repetitive workflow</strong> and make it your first agent. Building one end-to-end teaches more than reading about a hundred.</div></li>
+        <li><div class="txt"><strong>Write tests and evals before generating the code.</strong> They communicate intent more precisely than any natural-language prompt.</div></li>
+        <li><div class="txt"><strong>Review every line that is going to ship.</strong> Be skeptical of anything that looks clever. Check imports for real packages.</div></li>
+        <li><div class="txt"><strong>Maintain your developer skills.</strong> Treat AI as a way to apply expertise at greater scale, not a substitute for it.</div></li>
+      </ol>
+    </div>
+
+    <!-- SLIDE 12: Leaders + Orgs -->
+    <div class="slide slide-dark">
+      <div class="s-eyebrow">Actionable Guidance</div>
+      <div class="s-h2">Where to Start: Leaders &amp; Organizations</div>
+      <div class="s-h3">Engineering Leaders</div>
+      <ol class="s-num-list" style="margin-bottom:16px;">
+        <li><div class="txt"><strong>Make context engineering first-class.</strong> AGENTS.md, eval suites, skill libraries reviewed in PRs and owned by named engineers.</div></li>
+        <li><div class="txt"><strong>Set the bar at the eval.</strong> Eval coverage with explicit rubrics as a precondition for any agent shipping to a shared workflow.</div></li>
+        <li><div class="txt"><strong>Distinguish prototyping from production.</strong> Teams that keep this blurry produce prototypes that ship by accident.</div></li>
+      </ol>
+      <div class="s-h3">Organizations</div>
+      <ol class="s-num-list">
+        <li><div class="txt"><strong>Treat AI as an engineering investment.</strong> Speed without observability and eval coverage compounds into technical debt faster than any team can pay it down.</div></li>
+        <li><div class="txt"><strong>Adopt open standards.</strong> MCP for tool access and A2A for cross-agent delegation keep vendor options open.</div></li>
+        <li><div class="txt"><strong>Reframe hiring around judgment.</strong> The most valuable engineers will be those who can direct agents well, not those who write the most code.</div></li>
+      </ol>
+    </div>
+
+    <!-- SLIDE 13: Conclusion -->
+    <div class="slide slide-title">
+      <div class="s-eyebrow">Conclusion</div>
+      <div class="s-h2">Three Durable Principles</div>
+      <div class="s-principles" style="margin-top:20px;">
+        <div class="s-principle">
+          <div class="s-principle-num">1</div>
+          <div class="s-principle-body"><strong>Structure scales, vibes don't.</strong><p>For production software, specifications, tests, guardrails, and human oversight of architecture are not optional. The gap between "it seems to work" and "it works correctly under all conditions" is where production outages live.</p></div>
+        </div>
+        <div class="s-principle">
+          <div class="s-principle-num">2</div>
+          <div class="s-principle-body"><strong>AI amplifies your engineering culture.</strong><p>Strong testing practices, clear architectural standards, and healthy code review get dramatically more value. AI multiplies both your strengths and your weaknesses.</p></div>
+        </div>
+        <div class="s-principle">
+          <div class="s-principle-num">3</div>
+          <div class="s-principle-body"><strong>The human role is evolving, not diminishing.</strong><p>Skills shift from implementation to judgment, from writing code to designing the systems that produce code.</p></div>
+        </div>
+      </div>
+      <div class="s-quote" style="margin-top:28px;font-size:18px;"><em>Generation is solved. Verification, judgment, and direction are the new craft.</em></div>
+    </div>
+
+  </div><!-- /slide-track -->
+
+  <!-- PRESENTER BAR -->
+  <div id="pres-bar">
+    <button class="pres-nav" id="btn-prev" onclick="changeSlide(-1)" disabled>&#8592;</button>
+    <div id="slide-progress"><div id="slide-progress-fill"></div></div>
+    <div id="slide-counter">1 / 14</div>
+    <button class="pres-nav" id="btn-next" onclick="changeSlide(1)">&#8594;</button>
+  </div>
+</div><!-- /pres-view -->
+
+
+<script>
+  let presMode = false;
+  let currentSlide = 0;
+  const slides = document.querySelectorAll('.slide');
+  const total = slides.length;
+
+  function toggleMode() {
+    presMode = !presMode;
+    document.body.classList.toggle('pres-mode', presMode);
+    const icon = document.getElementById('toggle-icon');
+    const label = document.getElementById('toggle-label');
+    if (presMode) {
+      icon.innerHTML = '<path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>';
+      label.textContent = 'Exit';
+      currentSlide = 0;
+      updateSlide();
+    } else {
+      icon.innerHTML = '<path d="M4 6h16v2H4zm0 5h16v2H4zm0 5h16v2H4z"/>';
+      label.textContent = 'Present';
+    }
+  }
+
+  function updateSlide() {
+    slides.forEach((s, i) => {
+      s.classList.remove('active', 'leaving');
+      if (i === currentSlide) s.classList.add('active');
+    });
+    document.getElementById('slide-counter').textContent = (currentSlide + 1) + ' / ' + total;
+    document.getElementById('slide-progress-fill').style.width = ((currentSlide + 1) / total * 100) + '%';
+    document.getElementById('btn-prev').disabled = currentSlide === 0;
+    document.getElementById('btn-next').disabled = currentSlide === total - 1;
+    // scroll slide to top
+    slides[currentSlide].scrollTop = 0;
+  }
+
+  function changeSlide(dir) {
+    const prev = currentSlide;
+    currentSlide = Math.max(0, Math.min(total - 1, currentSlide + dir));
+    if (currentSlide !== prev) {
+      slides[prev].classList.add('leaving');
+      setTimeout(() => slides[prev].classList.remove('active', 'leaving'), 300);
+      slides[currentSlide].classList.add('active');
+      document.getElementById('slide-counter').textContent = (currentSlide + 1) + ' / ' + total;
+      document.getElementById('slide-progress-fill').style.width = ((currentSlide + 1) / total * 100) + '%';
+      document.getElementById('btn-prev').disabled = currentSlide === 0;
+      document.getElementById('btn-next').disabled = currentSlide === total - 1;
+      slides[currentSlide].scrollTop = 0;
+    }
+  }
+
+  document.addEventListener('keydown', e => {
+    if (!presMode) return;
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); changeSlide(1); }
+    if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp')  { e.preventDefault(); changeSlide(-1); }
+    if (e.key === 'Escape') toggleMode();
+  });
+</script>
+
+</body>
+</html>

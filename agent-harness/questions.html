@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Open Questions — The New SDLC</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f8f9fa;
+      color: #202124;
+      line-height: 1.65;
+      padding: 48px 24px 80px;
+    }
+    .container { max-width: 780px; margin: 0 auto; }
+
+    header { margin-bottom: 40px; }
+    header h1 { font-size: 28px; font-weight: 700; margin-bottom: 6px; }
+    header p { font-size: 14px; color: #5f6368; }
+
+    .q-item {
+      background: white;
+      border-radius: 10px;
+      padding: 28px 32px;
+      margin-bottom: 20px;
+      box-shadow: 0 1px 4px rgba(0,0,0,0.07);
+      border-left: 4px solid #1a73e8;
+    }
+    .q-num {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #1a73e8;
+      margin-bottom: 8px;
+    }
+    .q-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #202124;
+      margin-bottom: 14px;
+      line-height: 1.4;
+    }
+    .q-notes {
+      font-size: 14px;
+      color: #5f6368;
+      line-height: 1.7;
+    }
+    .q-notes p { margin-bottom: 8px; }
+    .q-notes p:last-child { margin-bottom: 0; }
+    .tag {
+      display: inline-block;
+      background: #e8f0fe;
+      color: #1a73e8;
+      border-radius: 12px;
+      padding: 3px 10px;
+      font-size: 11px;
+      font-weight: 600;
+      margin-right: 6px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+  <header>
+    <h1>Open Questions</h1>
+    <p>From reading: <em>The New SDLC With Vibe Coding</em> — things to dig into further.</p>
+  </header>
+
+  <div class="q-item">
+    <div class="q-num">Question 1</div>
+    <div class="q-text">How do you create tests in an agentic workflow — and how do you stop the agent from just making the tests pass rather than actually solving the problem?</div>
+    <span class="tag">Testing</span><span class="tag">Evals</span>
+    <div class="q-notes">
+      <p>The paper says tests should be written before code, and a good eval suite "communicates intent more precisely than any natural-language prompt." But it's thin on mechanics. Do you write the tests yourself first and then hand them to the agent? Can the agent write the tests too, and if so, what stops it from writing tests that trivially pass its own output?</p>
+      <p>Also: what does the TDD loop look like concretely when an agent is doing both the test writing and the implementation?</p>
+    </div>
+  </div>
+
+  <div class="q-item">
+    <div class="q-num">Question 2</div>
+    <div class="q-text">How do you actually set up evals — what tool do you use, and what does a minimal eval look like in practice?</div>
+    <span class="tag">Evals</span><span class="tag">Tooling</span>
+    <div class="q-notes">
+      <p>The paper is light on the mechanics here. Key takeaway from the whitepaper and blog: <strong>"set the bar at the eval, not the demo"</strong> — a passing eval suite proves an agent succeeds reliably, not just once. But what does that actually look like to set up?</p>
+      <p>What tools are commonly used (LangSmith, Braintrust, custom scripts)? What's the minimum viable eval for a new agent? What do scoring rubrics look like, and what makes a good LM judge?</p>
+    </div>
+  </div>
+
+  <div class="q-item">
+    <div class="q-num">Question 3</div>
+    <div class="q-text">How do you get the six types of context into an agent — and when should each one be loaded?</div>
+    <span class="tag">Context Engineering</span><span class="tag">Agent Skills</span>
+    <div class="q-notes">
+      <p>The six types are: Instructions, Knowledge, Memory, Examples, Tools, and Guardrails. The paper distinguishes static context (always loaded) from dynamic context (loaded on demand via skills/RAG), but doesn't show how you wire that up.</p>
+      <p>Concretely: how do you configure what goes in AGENTS.md vs. what lives in a skill file? How do skill files get triggered — is it keyword matching, LLM decision, or explicit invocation? How does RAG fit in for the Knowledge type?</p>
+    </div>
+  </div>
+
+  <div class="q-item">
+    <div class="q-num">Question 4</div>
+    <div class="q-text">How does orchestration logic actually work — sub-agent spawning, model routing, hand-offs?</div>
+    <span class="tag">Orchestration</span><span class="tag">Multi-agent</span>
+    <div class="q-notes">
+      <p>The paper names orchestration logic as a core harness component ("sub-agent spawning, model routing, hand-offs between specialists, and the rules that govern when each one fires") but doesn't explain how you build or configure it.</p>
+      <p>Questions: How does a planning agent hand off to a coding agent? What protocol governs that (A2A? shared session state? MCP?)? How do you do intelligent model routing in practice — is it rule-based or does a meta-agent decide? What does a minimal orchestration setup look like vs. a production one?</p>
+    </div>
+  </div>
+
+</div>
+</body>
+</html>
