@@ -198,6 +198,21 @@ Eval(
       <p>The paper names orchestration logic as a core harness component ("sub-agent spawning, model routing, hand-offs between specialists, and the rules that govern when each one fires") but doesn't explain how you build or configure it.</p>
       <p>Questions: How does a planning agent hand off to a coding agent? What protocol governs that (A2A? shared session state? MCP?)? How do you do intelligent model routing in practice — is it rule-based or does a meta-agent decide? What does a minimal orchestration setup look like vs. a production one?</p>
     </div>
+    <div class="answer">
+      <h4>Answer</h4>
+      <p><strong>Orchestration is three decisions — who runs next, with which model, and how the baton gets passed — and you want as much of it in deterministic code as you can get away with.</strong> Letting one orchestrator-LLM decide everything is flexible but unpredictable; production setups are mostly a hard-coded control flow (a graph or pipeline) with model judgment only at the nodes.</p>
+      <ol>
+        <li><strong>Spawning: a sub-agent is a fresh context window with a scoped job.</strong> The orchestrator calls a sub-agent tool with a focused prompt and a <em>subset</em> of tools; the sub-agent works in its own isolated context and returns only a result/summary — not its whole transcript. That isolation is the point: the lead stays clean and you can fan out several sub-agents in parallel. Caveat: multi-agent fan-out burns roughly <strong>15× the tokens</strong> of a single-agent chat (Anthropic's multi-agent research figure), so reserve it for high-value, parallelizable, breadth-first work — it's not the default.</li>
+        <li><strong>Hand-offs: pass an artifact, not a conversation.</strong> The robust planner→coder pattern is for the planner to emit a structured artifact — a plan file, a spec, a task list — that the coder reads. The hand-off is shared state on disk, not a live wire. Two open protocols formalize this when agents are separate <em>services</em>:
+          <ul>
+            <li><strong>A2A</strong> (Agent2Agent) — <em>horizontal</em>, agent↔agent. An agent publishes an <strong>Agent Card</strong> at <code>/.well-known/agent-card.json</code> advertising its skills and endpoints; a client agent discovers it and delegates a task over JSON-RPC.</li>
+            <li><strong>MCP</strong> (Model Context Protocol) — <em>vertical</em>, agent↔tools/data. It's how an agent reaches tools, not how agents hand off to each other.</li>
+          </ul>
+          They compose: an A2A client delegates to an A2A agent, which then uses MCP to reach its tools. But for sub-agents <em>inside one harness</em> you need neither — a sub-agent call plus a shared file is the whole hand-off. Reach for A2A only when the agents are independent services (different teams, vendors, or processes).</li>
+        <li><strong>Routing: start rule-based, role → model.</strong> Map each role to a model by difficulty: a cheap/fast model (e.g., Haiku) for triage, classification, and narrow sub-tasks; a frontier model (e.g., Opus) for orchestration and hard reasoning or coding. That's static config and covers most cases. A meta-agent router — a small model that scores difficulty and dispatches — is a production optimization: more adaptive, but it adds latency, cost, and another failure point. Don't build it until a fixed role→model mapping is demonstrably leaving quality or cost on the table.</li>
+      </ol>
+      <p><strong>Minimal vs. production.</strong> Minimal is one orchestrator with a sub-agent/Task tool: it decides when to spawn a focused sub-agent, gets the result back, and hands off via prompt + a shared file — no framework. Production is an explicit graph/state-machine (LangGraph, Google ADK, CrewAI, the Claude or OpenAI agent SDKs) with defined roles, scoped tools, per-role model routing, persistent shared state, tracing, retries/guardrails, and an eval suite over the whole pipeline. The jump isn't <em>more agents</em> — it's making the control flow deterministic and observable.</p>
+    </div>
   </div>
 
 </div>
