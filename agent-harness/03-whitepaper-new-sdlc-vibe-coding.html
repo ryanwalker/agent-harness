@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Whitepaper — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.78rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        .caveat { background: #fff8c5; border: 1px solid #d4a72c; border-radius: 8px; padding: 16px 20px; margin-bottom: 16px; font-size: 0.84rem; color: #7d4e00; }
+        .note { background: #f6f8fa; border: 1px solid var(--border); border-radius: 6px; padding: 12px 16px; font-size: 0.82rem; color: var(--muted); margin-bottom: 16px; font-style: italic; }
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.83em; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 12px 0; }
+        th { background: var(--code-bg); border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); }
+        td { border: 1px solid var(--border); padding: 8px 12px; vertical-align: top; }
+        tr:nth-child(even) td { background: #fafbfc; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>The New SDLC With Vibe Coding</h1>
+    <p class="topic">Google Whitepaper (51 pages, May 2026) — Framework for moving from casual AI prompting to disciplined agentic engineering</p>
+    <div class="meta"><span>Osmani, Saboo, Kartakis</span><span>May 2026</span><span>51 pages — read in full from PDF</span></div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html" class="active">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="note">Note: Summary based on full PDF read (all 51 pages).</div>
+
+    <h2>Key Concepts</h2>
+
+    <div class="card">
+        <h3>The Spectrum (not a binary)</h3>
+        <ul>
+            <li>The key differentiator is NOT whether you use AI — it's how much structure, verification, and human judgment surrounds the AI's output</li>
+            <li>Three positions: Vibe Coding | Structured AI-Assisted | Agentic Engineering</li>
+            <li><strong>Vibe Coding:</strong> casual prompts, "does it seem to work?" verification, disposable code; appropriate scope = prototypes/hackathons; risk = high</li>
+            <li><strong>Structured AI-Assisted:</strong> detailed prompts with examples and constraints, manual testing and spot-checks, selective review; scope = features in established codebases; risk = moderate</li>
+            <li><strong>Agentic Engineering:</strong> formal specs + architecture docs, automated evals + CI/CD gates, comprehensive review; scope = production systems at scale; risk = low (systematic verification at every stage)</li>
+            <li>The same coding agent can be used at either end — the spectrum is about deliberateness of harness configuration, not the tool</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Agent = Model + Harness (the core equation)</h3>
+        <ul>
+            <li>Model ~10% of outcomes; Harness ~90% of outcomes</li>
+            <li>Harness: everything surrounding the model — prompts, tools, context policies, hooks, sandboxes, sub-agents, observability</li>
+            <li>Terminal Bench 2.0: one team moved a coding agent from outside Top 30 → Top 5 by changing only the harness, no model change</li>
+            <li>LangChain study: +13.7 benchmark points on the same benchmark by tweaking only system prompt, tools, and middleware on a fixed model</li>
+            <li>"Most agent failures, examined honestly, are configuration failures."</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Five Parts of Every Agent</h3>
+        <ol>
+            <li><strong>Model</strong> — reasoning engine; reads context, decides next step, produces output</li>
+            <li><strong>Tools</strong> — connect model to the world: APIs, code execution, databases, other agents</li>
+            <li><strong>Memory</strong> — state: past interactions, project rules, context across sessions</li>
+            <li><strong>Orchestration</strong> — code that runs the loop: assembles context, dispatches tool calls, captures results, decides whether to continue</li>
+            <li><strong>Deployment</strong> — hosting, identity, observability, production infrastructure</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h3>Six Types of Agent Context</h3>
+        <ol>
+            <li><strong>Instructions</strong> — core role, goals, operational boundaries</li>
+            <li><strong>Knowledge</strong> — retrieved docs, architectural diagrams, domain-specific data</li>
+            <li><strong>Memory</strong> — short-term session logs + long-term persistent state</li>
+            <li><strong>Examples</strong> — few-shot behavioral demos and codebase reference patterns</li>
+            <li><strong>Tools</strong> — precise definitions of APIs, scripts, external services the agent can invoke</li>
+            <li><strong>Guardrails</strong> — hard constraints, formatting rules, safety validations</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h3>Static vs. Dynamic Context</h3>
+        <ul>
+            <li><strong>Static:</strong> always loaded every interaction — system instructions, rule files (AGENTS.md, CLAUDE.md, GEMINI.md), global memory, core guardrails; token cost: high; never forgotten</li>
+            <li><strong>Dynamic:</strong> loaded on demand — Agent Skills (triggered by task match), tool results (retrieved during execution), RAG documents, windowed session history; token cost: low per turn; pay only when needed</li>
+            <li>Boundary between static and dynamic is a first-class architectural decision, reviewed and versioned like code</li>
+            <li>Too much static context wastes tokens and dilutes signal; too little means the agent forgets critical rules</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Agent Skills — the key pattern for managing static/dynamic tradeoff</h3>
+        <ul>
+            <li>Structured, portable packages of procedural knowledge loaded only when the task calls for it</li>
+            <li>Agent sees lightweight metadata at startup, loads full instructions on task match, pulls deep reference material only when explicitly needed</li>
+            <li>Solves four problems: context rot from overloaded prompts, absence of procedural memory for LLMs, operational overhead of multi-agent architectures, need for portability across tools and vendors</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>The New SDLC — compression is uneven</h3>
+        <ul>
+            <li><strong>Traditional iterative:</strong> Requirements (2–3 days) → Design (1–2 days) → Implementation (1–3 weeks) → Testing (3–5 days) → Review &amp; Deploy (2–3 days) → Maintenance; sprint cycle: weeks</li>
+            <li><strong>AI-Driven:</strong> same phases but Implementation = minutes to hours; iteration cycle: minutes to hours</li>
+            <li>What shifts: bottleneck moves from writing code → specifying intent precisely and verifying output</li>
+            <li>Specification quality is the new bottleneck; architecture decisions are amplified at scale</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>How AI Transforms Each SDLC Phase</h3>
+        <ul>
+            <li><strong>Requirements:</strong> AI generates user stories from product briefs, identifies edge cases humans miss, produces API schemas from NL descriptions, generates interactive prototypes; requirements become a conversation not a handoff document</li>
+            <li><strong>Design/Architecture:</strong> most stubbornly human-centric phase; trade-offs (consistency vs. availability, build vs. buy) depend on business context AI cannot fully grasp; AI excels at implementing decisions once made, scaffolding entire applications from a clear architecture doc</li>
+            <li><strong>Implementation:</strong> 25–39% productivity gains (industry surveys); METR study found experienced devs took 19% longer on certain tasks because of verification/debugging overhead; work transforms from writing to reviewing, guiding, verifying</li>
+            <li><strong>Testing &amp; QA:</strong> output evaluation (does code compile, do tests pass) + trajectory evaluation (full sequence of tool calls and intermediate reasoning); fluent output that skipped verification steps is more dangerous than one with a visible error; quality flywheel: evaluate → cluster root causes → optimize prompts/tools → verify against regression suite → monitor production</li>
+            <li><strong>Code Review &amp; Deployment:</strong> AI as first-pass reviewer (bugs, style violations, security vulnerabilities); human review still required for design/maintainability/strategic alignment; AI agents monitor deployment health, auto-rollback, predict deployment risk; deployment pipelines becoming AI-aware</li>
+            <li><strong>Maintenance:</strong> previously impenetrable legacy codebases now navigable with AI; agents can systematically migrate between frameworks, update deprecated APIs, modernize test suites</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>The Factory Model</h3>
+        <ul>
+            <li>Developer's primary output is not code — it's the system that produces code</li>
+            <li>Developer Zone: Define Specs → Design Guardrails → Review &amp; Approve</li>
+            <li>Agent Factory Floor: Specs/Context/Requirements → Planning Agent → Coding Agent → Tests &amp; Verification (pass → Verified Output; fail → Failure feedback loop back to Planning Agent)</li>
+            <li>Guardrails at every level: token limits, security policies, style rules, architectural constraints</li>
+            <li>"Give agents success criteria rather than step-by-step instructions, then let them iterate."</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Harness Components (What Surrounds the Model)</h3>
+        <ul>
+            <li><strong>Instructions and Rule Files:</strong> AGENTS.md, CLAUDE.md, GEMINI.md, skill files, sub-agent prompts</li>
+            <li><strong>Tools:</strong> functions, MCP servers, APIs the agent can call, plus prose telling the model when/how to call them</li>
+            <li><strong>Sandboxes and execution environments:</strong> where agent code runs, what it can access, what it cannot reach</li>
+            <li><strong>Orchestration logic:</strong> sub-agent spawning, model routing, hand-offs between specialists, rules governing when each fires</li>
+            <li><strong>Guardrails / Hooks:</strong> deterministic code at specific lifecycle points (before a tool call, after a file edit, before a commit); things the agent should never forget but often does</li>
+            <li><strong>Observability:</strong> logs, traces, evaluations, cost and latency metering; without it there is no way to tell whether the agent is doing well or quietly drifting</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Harness Across the SDLC</h3>
+        <ol>
+            <li><strong>Requirements, Planning &amp; Architecture (Configuring the Harness):</strong> create AGENTS.md, define architectural constraints, specify tool access and fundamental rules before a single line of production code</li>
+            <li><strong>Implementation (Running the Harness):</strong> sandboxes and execution environments keep agent focused, secure, productive; model generates code within harness-isolated sandbox, uses only tools the harness provides</li>
+            <li><strong>Testing &amp; QA (The Feedback Loop):</strong> orchestration logic captures test failure output and routes it back to the model to re-plan; harness creates the automated "think → act → observe" loop</li>
+            <li><strong>Code Review, Deployment &amp; Maintenance (Observing the Harness):</strong> hooks block commits with hard-coded passwords or policy violations; observability tracks token costs, latency, agent drift, lets engineers audit why a decision was made</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h3>Developer Modes: Conductor vs. Orchestrator</h3>
+        <ul>
+            <li><strong>Conductor:</strong> real-time, synchronous, in-IDE; keystroke-level control, immediate feedback, single-file scope, developer always in the loop; best for exploratory coding, prototyping, learning new APIs; risk — can become a bottleneck if developer directs every keystroke</li>
+            <li><strong>Orchestrator:</strong> asynchronous, high-level, multi-agent; goal-level control, delayed feedback, multi-file scope, reviews outcomes not keystrokes; best for feature implementation, migrations, test generation; requires skills in specification, decomposition, evaluation, system design</li>
+            <li>Most developers move fluidly between both in a single day</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Three Categories of Coding Agent in Daily Practice</h3>
+        <ul>
+            <li><strong>In the editor:</strong> inline completion, chat panels, whole-codebase awareness in IDE; examples: GitHub Copilot, Cursor, Windsurf, JetBrains AI Assistant</li>
+            <li><strong>In the terminal:</strong> full filesystem access, multi-file edits, runs tools and tests, iterates on results; examples: Claude Code, Codex CLI, Antigravity CLI, Open Code, Cline, Aider</li>
+            <li><strong>In the background:</strong> cloud-hosted sandboxes, works autonomously for hours, produces PR output; examples: Google Jules, GitHub Copilot agent mode, Cursor background agents, Google AlphaEvolve</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>The 80% Problem</h3>
+        <ul>
+            <li>Agents rapidly generate ~80% of code for a feature</li>
+            <li>Remaining 20% (edge cases, error handling, integration points, subtle correctness) demands deep contextual knowledge current models often lack</li>
+            <li>Error character has evolved from syntax mistakes → conceptual failures: wrong business logic assumptions, missing edge cases, architectural decisions that create long-term maintenance burdens</li>
+            <li>These errors are harder to detect because the code "looks right" and may pass basic tests</li>
+            <li>Effective developers use AI for rapid implementation of well-specified tasks; reserve their own attention for ambiguous requirements, architectural trade-offs, and correctness verification</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h3>Economics: CapEx vs. OpEx</h3>
+        <ul>
+            <li><strong>Vibe Coding (Low CapEx, High OpEx):</strong> token burn from unstructured prompting loops, context collapse, maintenance tax (spaghetti code with no structural consistency), security remediation; crossover point: vibe coding costs 3–10x more per feature at scale</li>
+            <li><strong>Agentic Engineering (High CapEx, Low OpEx):</strong> upfront investment in API schemas, deterministic test suites, structured agent context; marginal cost of shipping and maintaining a feature drops dramatically thereafter</li>
+            <li>Context engineering as financial lever: dense high-signal AGENTS.md increases first-pass success rate, avoids costly trial-and-error loops</li>
+            <li>Intelligent model routing: frontier models for complex tasks (requirements, architecture, initial implementation); smaller, faster, cheaper models for deterministic lower-complexity tasks (test generation, code review, CI/CD monitoring)</li>
+        </ul>
+    </div>
+
+    <h2>Actionable Takeaways</h2>
+
+    <div class="card">
+        <h3>For Individual Developers</h3>
+        <ol>
+            <li>Set up an AGENTS.md (or CLAUDE.md / GEMINI.md) for every project — start with 10 lines covering stack, conventions, hard rules, workflow; add a rule every time the agent does something it shouldn't repeat</li>
+            <li>Install a set of Agent Skills for your coding agent (e.g., via Agents CLI) to build, evaluate, deploy, and optimize agents</li>
+            <li>Pick one repetitive workflow and build it as an agent end-to-end — doing this once teaches more than reading about a hundred</li>
+            <li>Write tests and evals before generating code — they are the contract with the AI and communicate intent more precisely than any natural-language prompt</li>
+            <li>Review every line the agent produces before it ships — check imports for real packages, verify error handling covers realistic failure modes, be skeptical of anything that looks clever</li>
+            <li>Maintain your foundational developer skills deliberately — AI handles the routine, but debugging, system design, performance intuition, and architecture judgment must stay sharp; treat AI as a way to apply expertise at greater scale, not a substitute for it</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h3>For Engineering Leaders / Team Rollout</h3>
+        <ol>
+            <li>Make context engineering a first-class engineering practice — treat AGENTS.md, system prompts, eval suites, and skill libraries as code: reviewed in pull requests, versioned with the project, owned by named engineers; without this discipline, harness drifts and agent behavior becomes irreproducible</li>
+            <li>Set the bar at the eval, not the demo — a working demo proves an agent can succeed once; a passing eval suite proves it succeeds reliably; define scoring criteria (task success, tool use quality, trajectory compliance, hallucination rate, response quality) and require eval coverage as a precondition for any agent shipping into a shared workflow</li>
+            <li>Re-shape code review for AI-generated code — extra attention to hallucinated dependencies, inadequate error handling, subtle correctness gaps that look right at a glance; train reviewers on the failure modes of generated code</li>
+            <li>Make the boundary between vibe coding and agentic engineering explicit in team norms — which projects, branches, and environments warrant which mode; teams that keep this distinction blurry produce prototypes that ship by accident</li>
+            <li>Invest in harness components as a shared team asset — reusable system prompts, skill libraries, MCP server connections, and evaluation harnesses compound across projects; treat them as infrastructure: documented, maintained, improved deliberately; the teams compounding the most value build the harness once and refine it many times</li>
+        </ol>
+    </div>
+
+    <div class="card">
+        <h3>For Engineering Leaders / Team Rollout (Org Level)</h3>
+        <ol>
+            <li>Treat AI-assisted development as an engineering investment, not a productivity feature — rolling out a coding agent without eval coverage, observability, and clear architectural standards produces speed without quality, which compounds into technical debt faster than any team can pay it down</li>
+            <li>Build the production substrate before the first production agent ships — trajectory and final-response evals running in CI, traces of every agent run, scoped permissions per agent, security review tuned to the failure modes of generated code; not after</li>
+            <li>Adopt open standards for tools and inter-agent communication — MCP for tool access, A2A (Agent2Agent protocol) for cross-agent delegation; choosing them now keeps vendor options open and avoids re-platforming later</li>
+            <li>Plan for hybrid teams of humans and agents — code review processes, on-call rotations, and team structures all need to evolve to reflect that agents are now participants, not just tools</li>
+            <li>Reframe hiring and skill development around judgment, not just implementation — the most valuable engineers in the next several years will be those who can direct agents well: strong at specification, evaluation, architectural judgment, and review</li>
+        </ol>
+    </div>
+
+    <h2>Named Patterns / Frameworks</h2>
+
+    <div class="card">
+        <ul>
+            <li><strong>Agent = Model + Harness</strong> — the core equation; the harness dominates outcomes, not the model</li>
+            <li><strong>The Spectrum</strong> — vibe coding to agentic engineering; position determined by verification rigor, not tooling choice</li>
+            <li><strong>Factory Model</strong> — developer designs the system that produces code; agents implement within guardrails; tests verify output; failure loops back</li>
+            <li><strong>Conductor mode</strong> — real-time, keystroke-level direction in the IDE; fine-grained control but limited throughput</li>
+            <li><strong>Orchestrator mode</strong> — async, goal-level delegation; high-leverage but requires specification and evaluation skills</li>
+            <li><strong>The 80% Problem</strong> — agents reliably produce ~80% of any feature; remaining 20% requires domain context models lack and is where production failures originate</li>
+            <li><strong>Static vs. Dynamic Context split</strong> — architectural design decision on what belongs in always-loaded vs. on-demand context</li>
+            <li><strong>Agent Skills</strong> — portable packages of procedural knowledge loaded dynamically by task match; solves context rot and portability</li>
+            <li><strong>Quality Flywheel</strong> — evaluate → cluster root causes → optimize prompts/tools → verify against regression suite → monitor production; each cycle compounds</li>
+            <li><strong>Intelligent Model Routing</strong> — route complex reasoning to frontier models; route deterministic work to smaller cheaper models</li>
+            <li><strong>Progressive Disclosure</strong> — agent sees only metadata at startup, loads full instructions on task match, pulls deep reference material only when explicitly needed</li>
+        </ul>
+    </div>
+
+    <h2>Data / Statistics Worth Citing</h2>
+
+    <div class="card">
+        <ul>
+            <li>85% of professional developers use AI coding agents regularly (early 2026) — GetPanto / Index.dev</li>
+            <li>51% use AI coding agents daily</li>
+            <li>41% of all new code is AI-generated (2026 industry data)</li>
+            <li>25–39% self-reported productivity gains from structured AI-assisted development (industry surveys)</li>
+            <li>METR study (Feb 2026): experienced developers took 19% longer on certain tasks with AI — largely due to time spent verifying, debugging, and correcting AI output</li>
+            <li>Terminal Bench 2.0: harness change alone (no model change) moved an agent from outside Top 30 → Top 5</li>
+            <li>LangChain study: +13.7 benchmark points on the same benchmark from harness changes alone (fixed model)</li>
+            <li>Vibe coding crossover point: 3–10x more expensive per feature than agentic engineering at scale</li>
+            <li>Deloitte: projecting 30–35% productivity gains across the full development process (2025–2026)</li>
+            <li>Anthropic experiment (early 2026): agent teams built a working C compiler in Rust in two weeks, with humans setting direction and reviewing but not writing implementation</li>
+            <li>Traditional SDLC implementation: 1–3 weeks → AI-Driven SDLC: minutes to hours</li>
+        </ul>
+    </div>
+
+    <h2>Gaps / Caveats</h2>
+
+    <div class="caveat card">
+        <ul>
+            <li>The 10%/90% model-vs-harness split is asserted via the Terminal Bench and LangChain examples but no formal methodology is cited — it is illustrative, not a measured ratio</li>
+            <li>Productivity gains (25–39%) are largely self-reported; the METR RCT result (19% slower) is the only controlled-experiment data cited and applies specifically to experienced developers on complex tasks — the paper does not reconcile these conflicting results</li>
+            <li>The paper is written at mid-2026 and explicitly acknowledges the phase-by-phase picture "is shifting fast" and "may look different in 12 months" — frameworks are intentionally durable but specific timelines are not</li>
+            <li>Architecture and design remain "stubbornly human-centric" — the paper does not offer a concrete model for when/how to delegate architectural decisions, only that you shouldn't fully delegate them</li>
+            <li>Security is treated lightly — the paper notes that vibe coding rapidly generates vulnerabilities and that security invariants should be encoded as executable tests, but provides no specific security metrics or mitigation checklist</li>
+            <li>The paper is published by Google and prominently features Google tools (Agents CLI, ADK, Agent Runtime, Jules, Gemini Code Assist, A2A protocol, AlphaEvolve) — the frameworks are vendor-agnostic but the tooling examples skew heavily toward the Google stack</li>
+            <li>No data on team-level coordination overhead when multiple developers each run background agents concurrently against shared codebases</li>
+        </ul>
+    </div>
+
+    <h2>Relevance</h2>
+
+    <div class="relevance card">
+        <p>The whitepaper provides the most comprehensive public framework available for operationalizing AI-assisted development at a team and org level — the spectrum model, harness taxonomy, factory model, and conductor/orchestrator distinction all translate directly into rollout planning conversations and give precise vocabulary for internal alignment. The economics section (vibe coding becomes 3–10x more expensive at scale) and the "where to start" prescriptions (AGENTS.md first, evals before demos, harness as shared infrastructure) are immediately applicable to team rollout sequencing and are strong interview talking points for engineering judgment questions.</p>
+    </div>
+
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

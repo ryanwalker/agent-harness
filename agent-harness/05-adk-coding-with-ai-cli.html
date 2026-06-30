@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADK: Coding with AI CLI — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.78rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.83em; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Coding with AI — ADK CLI Tutorial</h1>
+    <p class="topic">How to give your AI coding assistant (Claude Code, Cursor, Gemini CLI, etc.) live ADK documentation via MCP server or CLI scaffolding tools</p>
+    <div class="meta"><span>adk.dev</span><span>https://adk.dev/tutorials/coding-with-ai/</span></div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html" class="active">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="card">
+        <h2>Key Concepts</h2>
+        <ul>
+            <li>Two complementary approaches: (1) install "development skills" into your project via <code>google-agents-cli</code>, or (2) connect your coding assistant to ADK docs via an MCP server</li>
+            <li>The ADK Docs MCP server uses <code>mcpdoc</code> + <code>llms.txt</code> — a machine-readable documentation standard, not ADK-specific</li>
+            <li><code>llms.txt</code> is an index with links; <code>llms-full.txt</code> is the full flat doc — both served at <code>adk.dev/</code></li>
+            <li>MCP servers can be wired into any MCP-compatible tool using a standard JSON config block (<code>command</code>, <code>args</code>, <code>transport: stdio</code>)</li>
+            <li>The <code>uvx</code> runner is used throughout — no global install needed, runs tools ephemerally from PyPI</li>
+            <li>Agents CLI (<code>google-agents-cli</code>) bundles: scaffolding, lifecycle management, evaluation methodology, deployment guidance (Cloud Run, GKE), and API reference</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Actionable Takeaways</h2>
+        <ul>
+            <li>Add ADK docs to Claude Code with one command:
+                <pre><code>claude mcp add adk-docs --transport stdio -- uvx --from mcpdoc mcpdoc --urls AgentDevelopmentKit:https://adk.dev/llms.txt --transport stdio</code></pre>
+            </li>
+            <li>Add ADK docs to Cursor or any MCP-compatible tool via <code>mcp.json</code> / <code>mcp_config.json</code>:
+                <pre><code>{
+  "mcpServers": {
+    "adk-docs-mcp": {
+      "command": "uvx",
+      "args": ["--from", "mcpdoc", "mcpdoc", "--urls", "AgentDevelopmentKit:https://adk.dev/llms.txt", "--transport", "stdio"]
+    }
+  }
+}</code></pre>
+            </li>
+            <li>Bootstrap a new ADK project with: <code>uvx google-agents-cli setup</code></li>
+            <li>Use <code>mcpdoc</code> as the generic pattern for wiring any <code>llms.txt</code>-compatible doc set into your coding assistant — not just ADK</li>
+            <li>Point assistants at <code>adk.dev/llms-full.txt</code> directly if you want a single-file context dump instead of the indexed version</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Patterns / Frameworks Mentioned</h2>
+        <ul>
+            <li><strong>ADK (Agent Development Kit)</strong> — Google's framework for building agents</li>
+            <li><strong>MCP (Model Context Protocol)</strong> — standard for connecting tools/context to AI coding assistants</li>
+            <li><strong>llms.txt / llms-full.txt</strong> — emerging standard for machine-readable library documentation</li>
+            <li><strong>mcpdoc</strong> — PyPI package that serves any <code>llms.txt</code>-indexed site as an MCP server</li>
+            <li><strong>google-agents-cli</strong> — ADK's CLI for project scaffolding, evaluation, and deployment</li>
+            <li><strong>uvx</strong> — ephemeral Python tool runner (like <code>npx</code> for Python); no global install required</li>
+            <li>Supported IDEs/tools: Claude Code, Cursor, Gemini CLI, Antigravity, any MCP-compatible client</li>
+        </ul>
+    </div>
+
+    <div class="relevance card">
+        <h2>Relevance</h2>
+        <p>The <code>mcpdoc</code> + <code>llms.txt</code> pattern is framework-agnostic and reusable: any team can wire current library docs into their coding assistants without modifying the assistant itself — a low-friction way to standardize context across engineers.</p>
+        <p>For rollout: establish a shared <code>mcp.json</code> config in your project repo so every engineer's IDE automatically has the same documentation context wired up, reducing hallucination on framework-specific APIs.</p>
+    </div>
+
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code in Large Codebases — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.78rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.83em; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>How Claude Code Works in Large Codebases: Best Practices and Where to Start</h1>
+    <p class="topic">Enterprise patterns for deploying Claude Code across large, complex codebases (monorepos, legacy systems, distributed architectures)</p>
+    <div class="meta"><span>Anthropic</span><span>https://claude.com/blog/how-claude-code-works-in-large-codebases-best-practices-and-where-to-start</span></div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html" class="active">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="card">
+        <h2>Key Concepts</h2>
+        <ul>
+            <li>Claude Code navigates codebases like a developer — traverses file systems, uses grep, reads files live; no RAG/embeddings, no stale index</li>
+            <li>Performance is shaped more by the "harness" (surrounding infrastructure) than the model itself</li>
+            <li><strong>Seven harness components:</strong> CLAUDE.md files, hooks, skills, plugins, LSP integrations, MCP servers, subagents</li>
+            <li><code>CLAUDE.md</code> files are auto-loaded every session; skills are on-demand; plugins bundle setups for org-wide distribution</li>
+            <li>LSP integrations enable symbol-level navigation (not string matching) — requires explicit configuration, not automatic</li>
+            <li>Subagents run in isolation — useful for separating exploration from editing</li>
+            <li>Instructions in <code>CLAUDE.md</code> written for older models can constrain newer ones — treat config as living documentation</li>
+            <li>Non-git version control (Perforce, etc.) and massive directory structures require custom configuration</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Actionable Takeaways</h2>
+        <ul>
+            <li><strong>Keep CLAUDE.md lean and layered:</strong> root file for big-picture context, subdirectory files for local conventions</li>
+            <li>Initialize Claude in the relevant subdirectory, not the repo root — it walks up the tree automatically</li>
+            <li>Scope test/lint commands per subdirectory to avoid full-suite timeouts</li>
+            <li>Exclude generated files, build artifacts, and third-party code via <code>.gitignore</code> and <code>.claude/settings.json</code></li>
+            <li>Build a codebase map (markdown directory index) when folder structure is opaque</li>
+            <li>Deploy LSP servers explicitly for any typed language — do not assume it works out of the box</li>
+            <li><strong>Put reusable task expertise into skills, not CLAUDE.md</strong> — CLAUDE.md is for conventions, not procedures</li>
+            <li>Assign a DRI or small team to own Claude Code config before broad rollout</li>
+            <li>Establish governance (approved skills, code review requirements, limited initial access) before expanding</li>
+            <li>Distribute working setups as plugins to prevent tribal knowledge and fragmentation</li>
+            <li>Review and prune <code>CLAUDE.md</code> every 3–6 months as model capabilities improve — remove compensatory workarounds</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Patterns / Frameworks Mentioned</h2>
+        <ul>
+            <li><strong>CLAUDE.md hierarchy</strong> — layered config files by directory</li>
+            <li><strong>Skills</strong> — on-demand, reusable expertise files</li>
+            <li><strong>Plugins</strong> — bundled capability distributions for orgs</li>
+            <li><strong>Hooks</strong> — event-triggered scripts for automation and capturing learnings</li>
+            <li><strong>MCP servers</strong> — Model Context Protocol connections to internal tools/APIs</li>
+            <li><strong>Subagents</strong> — isolated Claude instances for parallel or scoped work</li>
+            <li><strong>LSP integration</strong> — Language Server Protocol for symbol-level navigation</li>
+            <li><strong>DRI pattern</strong> — designated responsible individual for config ownership</li>
+            <li><strong>"Agent manager" role</strong> — hybrid PM/engineer managing the Claude Code ecosystem</li>
+            <li><strong>Managed plugin marketplace</strong> — org-wide consistent distribution of approved setups</li>
+            <li><strong>Cross-functional working group</strong> — engineering + security + governance for regulated industries</li>
+        </ul>
+    </div>
+
+    <div class="relevance card">
+        <h2>Relevance</h2>
+        <ul>
+            <li>Rolling out Claude Code at a team or job level maps directly to this article — the DRI model, governance-first approach, and plugin distribution patterns are the practical playbook for adoption without chaos</li>
+            <li>The harness-over-model framing is transferable: whatever agentic tooling your team uses, the infrastructure (context files, approved skills, review processes) determines outcomes more than model selection alone</li>
+        </ul>
+    </div>
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

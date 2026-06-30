@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agentic Code Review — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.78rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        .red-flags { list-style: none; padding: 0; }
+        .red-flags li { padding: 8px 13px; border-radius: 6px; margin-bottom: 6px; font-size: 0.84rem; background: #ffebe9; border-left: 3px solid #cf222e; }
+        .red-flags li::before { content: "⚠ "; color: #cf222e; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Agentic Code Review</h1>
+    <p class="topic">How to structure code review workflows when agents are generating most of the code</p>
+    <div class="meta"><span>Addy Osmani</span><span>addyosmani.com/blog/agentic-code-review/</span></div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html" class="active">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="card">
+        <h2>Key Concepts</h2>
+        <ul>
+            <li>The bottleneck shifted: code generation is cheap now; verification is the expensive, high-leverage skill</li>
+            <li>Industry data (2026): AI users produce ~4x raw code output but only ~12% more delivered value; code churn up 861%; defect rates rose from 9% to 54%; AI-written code produces 1.7x more issues than human-written code</li>
+            <li>The <strong>intent reconstruction problem</strong>: agents discard their reasoning before producing diffs, leaving reviewers with no context — solution is to capture agent reasoning as decision logs attached to PRs</li>
+            <li>Four parallel reviewers flagged different lines 93.4% of the time — heterogeneous reviewers beat any single "best" tool</li>
+            <li>PRs merging with zero review up 31.3%; review duration up 441.5% — the process is breaking under volume</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Actionable Takeaways</h2>
+        <ul>
+            <li>Determine review depth using three variables per PR: <strong>blast radius</strong> (consequence of failure), <strong>code lifespan</strong> (throwaway vs. long-lived), <strong>knowledge distribution</strong> (solo vs. team ownership required)</li>
+            <li>Implement <strong>risk-tiered review</strong>: config changes → linter + glance; payments/auth → types + tests + dual AI review + human sign-off + security pass; boilerplate → lightweight</li>
+            <li>Require agents to produce <strong>intake artifacts</strong> before review begins: statement of purpose, appropriately-sized diff with comments, test output, evidence justifying the change</li>
+            <li>Instruct agents to produce <strong>small commits</strong> deliberately — large unreviewable diffs are 51% larger on average in agent PRs</li>
+            <li><strong>Read test changes more carefully than implementation code</strong> — agents may alter assertions to match broken behavior</li>
+            <li>Run <strong>two deliberately different AI reviewers</strong> (e.g., one broad, one correctness-focused); don't chase the single "best" tool</li>
+            <li>Keep CI as immovable deterministic gates; never let agents weaken coverage thresholds or skip linting</li>
+            <li>Implement <strong>circuit breakers</strong> for high-maintenance PRs using file types and patch size before human review begins</li>
+            <li>A human must own the merge decision — accountability, strategic judgment, and requirement-level thinking don't delegate</li>
+            <li>For teams: protect reviewer capacity as a measurable resource; prevent review from becoming a senior engineer tax</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Red Flags in Agent PRs</h2>
+        <ul class="red-flags">
+            <li>Removed or rewritten tests (especially altered assertions)</li>
+            <li>Lowered coverage thresholds or skipped linting</li>
+            <li>Untrusted input flowing into prompt calls (prompt injection surface)</li>
+            <li>Changes that weaken CI gates</li>
+            <li>Diffs too large to meaningfully review</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Patterns / Frameworks Mentioned</h2>
+        <ul>
+            <li><strong>Risk-tiered review</strong> — match review effort to blast radius + lifespan + knowledge distribution</li>
+            <li><strong>Intent reconstruction problem</strong> — capture agent reasoning as decision logs on PRs</li>
+            <li><strong>Heterogeneous reviewer pattern</strong> — run 2+ different AI reviewers in parallel</li>
+            <li><strong>Loop Engineering</strong> — humans own escalation, sampling, and merge; agents own generation</li>
+            <li><strong>Predictive triage / circuit breakers</strong> — flag high-maintenance PRs early using patch metadata</li>
+            <li><strong>Intake requirements gate</strong> — enforce PR intake checklist before review begins</li>
+            <li><strong>Kun Chen loop pattern</strong> — detailed upfront plan → 20-30 parallel agents → automated gates → human escalation (noted as solo/greenfield only, not team/legacy)</li>
+            <li>Tools mentioned: CodeRabbit, Greptile, Sentry Seer, Cursor BugBot, Anthropic Code Review, GitClear, Faros AI, GitHub Copilot</li>
+        </ul>
+    </div>
+
+    <div class="relevance card">
+        <h2>Relevance</h2>
+        <ul>
+            <li>Directly applicable to team rollout: the risk-tiering framework and intake requirements give you concrete process gates to propose without mandating a specific tool or language stack.</li>
+            <li>The core message for job interviews: the engineering value-add has shifted from writing to verifying — demonstrate you have a review system, not just a generation workflow.</li>
+        </ul>
+    </div>
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

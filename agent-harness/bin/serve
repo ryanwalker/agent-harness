@@ -1,0 +1,25 @@
+#!/bin/bash
+
+PORT=4500
+DIR="$(cd "$(dirname "$0")/.." && pwd)"
+
+# Kill anything on port 4500
+PID=$(lsof -ti :$PORT 2>/dev/null)
+if [ -n "$PID" ]; then
+    echo "Killing process on port $PORT (PID: $PID)..."
+    kill -9 $PID 2>/dev/null
+    sleep 0.3
+fi
+
+# Start serve in background
+echo "Starting server at http://localhost:$PORT..."
+npx serve "$DIR" -p $PORT &>/dev/null &
+SERVER_PID=$!
+
+# Wait for it to be ready
+sleep 1.5
+
+# Open browser
+open "http://localhost:$PORT"
+
+echo "Running (PID $SERVER_PID) — stop with: kill \$(lsof -ti :$PORT)"

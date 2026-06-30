@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The New Software Lifecycle: Vibe Coding vs. Agentic Engineering — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.97rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; font-size: 0.78rem; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        .relevance h2 { border-color: #93c5fd; color: #0550ae; }
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.83em; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+        .back-link:hover { text-decoration: underline; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; margin: 12px 0; }
+        th { background: var(--code-bg); border: 1px solid var(--border); padding: 8px 12px; text-align: left; font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); }
+        td { border: 1px solid var(--border); padding: 8px 12px; vertical-align: top; }
+        tr:nth-child(even) td { background: #fafbfc; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>The New Software Lifecycle: Vibe Coding vs. Agentic Engineering</h1>
+    <p class="topic">How AI restructures the SDLC — and why harness engineering, not the model, is the real leverage point</p>
+    <div class="meta">
+        <span>Addy Osmani</span>
+        <span>https://addyosmani.com/blog/new-sdlc-vibe-coding/</span>
+    </div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html" class="active">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="card">
+        <h2>Key Concepts</h2>
+        <ul>
+            <li><strong>Agent = Model (~10%) + Harness (~90%)</strong> — the harness includes instructions, tools, sandboxes, orchestration, hooks, and observability; most agent failures are harness failures</li>
+            <li><strong>Context engineering</strong> is the primary optimization surface; context categories: Instructions, Knowledge, Memory, Examples, Tools, Guardrails</li>
+            <li><strong>Static vs. dynamic context split</strong> — static loads every turn (system prompts, rule files), dynamic loads on-demand (RAG, task-specific skills); treat the boundary as a versioned architectural decision</li>
+            <li><strong>Progressive disclosure</strong> — agents see minimal metadata at startup, load full skill instructions only when task-matched, pull heavy references only during execution</li>
+            <li><strong>Verification spectrum</strong> ranges from vibe coding (casual prompts, assume functionality) → structured AI-assisted → agentic engineering (formal specs, automated evals, CI/CD gates)</li>
+            <li><strong>Three verification layers</strong>: Tests (deterministic I/O), Output Evaluation (final result), Trajectory Evaluation (reasoning path, tool calls, intermediate steps)</li>
+            <li><strong>The 80% problem</strong> — agents handle first 80% efficiently; the final 20% (edge cases, system seams, domain-specific logic) remains stubbornly hard</li>
+            <li><strong>Specification becomes the bottleneck</strong>, not implementation; verification moves to the center of the lifecycle</li>
+            <li><strong>Economics</strong>: vibe coding = low upfront CapEx, high ongoing OpEx (token burn, maintenance tax, security cleanup); agentic engineering = higher upfront, lower marginal cost per feature; vibe coding costs 3-10x more per feature past breakeven</li>
+            <li><strong>Conductor mode</strong> (real-time, IDE-integrated, keystroke-level) vs. <strong>Orchestrator mode</strong> (async, goal-based delegation, human review) — switch within a session based on task clarity</li>
+            <li>AI amplifies existing engineering culture — both its strengths and its weaknesses</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Actionable Takeaways</h2>
+        <ul>
+            <li><strong>Invest in the harness first</strong> — before tuning the model, audit instructions, tools, sandboxes, and hooks; that's where most gains are</li>
+            <li><strong>Create rule files</strong> (AGENTS.md, CLAUDE.md, or equivalent) versioned in source control as static guardrails — treat them like code, review them like code</li>
+            <li><strong>Implement progressive disclosure for agent skills</strong> — metadata only at startup, full instructions on match, heavy docs fetched on execution; keeps token cost low across a large skill library</li>
+            <li><strong>Build eval suites, not just demos</strong> — demos prove single-instance function; rubric-based eval suites prove reliable operation; set the bar at benchmark scores</li>
+            <li><strong>Flip the testing model</strong> — tests and evals become the primary specification mechanism, written before or alongside generation, not after</li>
+            <li><strong>Route by cost</strong> — large models for complex reasoning, small/cheap models for test gen, code review, CI checks; model routing is a direct financial lever</li>
+            <li><strong>Default to Orchestrator mode for well-specified work</strong> — migrations, test generation, and refactors are well-suited; use Conductor mode for exploration and unfamiliar code</li>
+            <li><strong>Specify trajectory evaluation</strong> — don't just check final output; evaluate whether the agent's reasoning path and tool calls were correct</li>
+            <li><strong>Treat the static/dynamic context boundary as an architecture decision</strong> — document it, version it, PR-review changes to it</li>
+            <li><strong>Maintenance is underrated</strong> — tedious migrations (dependency upgrades, API version bumps) are now feasible with agents; prioritize these as early wins for team rollout</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Patterns / Frameworks Mentioned</h2>
+        <ul>
+            <li><strong>Harness Engineering</strong> — the discipline of building the non-model components of an agent system</li>
+            <li><strong>Factory Model</strong> — production-scale agent deployment pattern</li>
+            <li><strong>Agentic Code Review</strong> — using agents in the review loop</li>
+            <li><strong>Progressive Disclosure Pattern</strong> — layered context loading (metadata → instructions → references)</li>
+            <li><strong>Conductor / Orchestrator Mode</strong> — dual interaction paradigm within the same tooling session</li>
+            <li><strong>Evaluation-Driven Development</strong> — benchmark → failure clustering → prompt/tool refinement → regression suite → prod monitoring loop</li>
+            <li><strong>MCP (Model Context Protocol)</strong> — standard for tool integration across agents</li>
+            <li><strong>A2A (Agent-to-Agent)</strong> — standard for agent-to-agent work handoff and coordination</li>
+            <li><strong>AGENTS.md / CLAUDE.md / GEMINI.md</strong> — tool-specific static rule file conventions</li>
+            <li><strong>Terminal Bench 2.0</strong> — coding agent benchmark referenced for harness impact evidence</li>
+            <li><strong>Google Agents CLI</strong> — collapses prototype-to-production gap (setup → build → eval → deploy in one session)</li>
+            <li><strong>Agent Engine</strong> — Google Cloud managed runtime for deployed agents</li>
+            <li><strong>Beyond Vibe Coding</strong> (O'Reilly) — book referenced as extended resource</li>
+        </ul>
+    </div>
+
+    <div class="relevance card">
+        <h2>Relevance</h2>
+        <ul>
+            <li>The harness-first framing gives a concrete rollout path: start with rule files and context structure, build eval suites, then layer in orchestration — no specific vendor lock-in required since the patterns (MCP, A2A, rule files) are tool-agnostic</li>
+            <li>The CapEx/OpEx model and "specification as bottleneck" argument are directly usable in team conversations to justify investment in agentic engineering infrastructure over ad-hoc AI use</li>
+        </ul>
+    </div>
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

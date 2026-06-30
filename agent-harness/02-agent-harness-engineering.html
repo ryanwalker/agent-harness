@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Harness Engineering — Agent Harness Research</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root { --bg:#f0f2f5; --card:#fff; --border:#d0d7de; --primary:#0969da; --accent:#6e40c9; --text:#1f2328; --muted:#57606a; --code-bg:#f6f8fa; --header-bg:#0d1117; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+        header { background: var(--header-bg); color: #e6edf3; padding: 40px 40px 30px; }
+        header h1 { font-size: 1.7rem; font-weight: 700; margin-bottom: 8px; }
+        header .meta { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.76rem; color: #8b949e; }
+        header .topic { color: #8b949e; font-size: 0.9rem; margin-top: 6px; }
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { max-width: 900px; margin: 0 auto; padding: 40px 40px 80px; }
+        h2 { font-size: 1.2rem; font-weight: 700; margin: 36px 0 14px; padding-bottom: 8px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 0.78rem; font-weight: 700; margin: 22px 0 10px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.4px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; margin-bottom: 12px; }
+        li { font-size: 0.86rem; margin-bottom: 6px; line-height: 1.6; }
+        li strong { color: var(--primary); }
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .relevance { background: #ddf4ff; border: 1px solid #93c5fd; border-radius: 8px; padding: 16px 20px; margin-top: 16px; }
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.8rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.83em; }
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 20px 40px; font-size: 0.76rem; }
+        .back-link { display: inline-block; margin-bottom: 24px; color: var(--primary); text-decoration: none; font-size: 0.84rem; }
+        .back-link:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Agent Harness Engineering</h1>
+    <p class="topic">How to design, configure, and evolve the harness layer that wraps an LLM to produce a reliable agent</p>
+    <div class="meta"><span>Addy Osmani</span><span>addyosmani.com/blog/agent-harness-engineering/</span></div>
+</header>
+<nav>
+    <a href="00-master-summary.html">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html" class="active">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+<main>
+    <a class="back-link" href="00-master-summary.html">← Back to Master Summary</a>
+
+    <div class="card">
+        <h2>Key Concepts</h2>
+        <ul>
+            <li><strong>Agent = Model + Harness</strong> — the harness is everything except the model: prompts, tools, execution loops, state, feedback, constraints</li>
+            <li>"A decent model with a great harness beats a great model with a bad harness"</li>
+            <li>Agent failures are almost always configuration problems, not model problems ("It's not a model problem. It's a configuration problem.")</li>
+            <li>Harness components: system prompts/docs, tools/infrastructure, context management, execution controls, long-horizon patterns</li>
+            <li><strong>Ratchet Principle</strong> — every agent mistake becomes a rule that prevents recurrence; failures are permanent signals, not one-offs</li>
+            <li>System prompt rules should each trace to a specific past failure or external constraint (no orphan rules)</li>
+            <li>Keep per-file docs under ~60 lines (HumanLayer recommendation)</li>
+            <li>Models post-train alongside specific harnesses — harnesses create model overfitting to their tool patterns</li>
+            <li>Industry is converging on shared harness patterns (Claude Code, Cursor, Aider, Cline look increasingly alike)</li>
+            <li><strong>Harness-as-a-Service (HaaS)</strong> — industry shifting from raw LLM APIs to harness frameworks (Claude Agent SDK, OpenAI Agents SDK, Codex SDK)</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Actionable Takeaways</h2>
+        <ul>
+            <li>Start with a v0.1 harness immediately — don't over-engineer upfront; iterate from real failures</li>
+            <li>Document every rule with a traceable reason; remove rules you can't explain</li>
+            <li>Wire hooks at lifecycle points (pre-tool-call, post-file-edit, pre-commit) to enforce conventions automatically</li>
+            <li>Gate destructive commands behind explicit approval — never let agents rm/overwrite without a permission check</li>
+            <li>Keep tool outputs on the filesystem, not in context — offload large outputs to disk, pass paths instead</li>
+            <li>Use compaction/summarization when context window fills; do full resets for multi-day tasks</li>
+            <li>Separate generation from evaluation — use a dedicated evaluator agent/step, not the same agent self-reviewing</li>
+            <li>Use progressive disclosure in skills/prompts — reveal instructions only when the relevant task is active</li>
+            <li>Design harness features by starting from desired behavior, then deriving the scaffolding needed</li>
+            <li>Treat every agent failure as a permanent input to harness config (add a rule, hook, or gate)</li>
+            <li>Success should be silent; failures should be verbose — wire back-pressure signals into loops</li>
+        </ul>
+    </div>
+
+    <div class="card">
+        <h2>Patterns / Frameworks Mentioned</h2>
+        <ul>
+            <li><strong>Ralph Loops</strong> — inject original prompt into fresh context windows to continue long-horizon tasks without context decay</li>
+            <li><strong>Planner / Generator / Evaluator split</strong> — separate agents for planning, generating, and evaluating output</li>
+            <li><strong>Sprint contracts</strong> — negotiate done-conditions (acceptance criteria) with the agent before implementation begins</li>
+            <li><strong>AGENTS.md / CLAUDE.md / skill files</strong> — structured documentation layers for harness configuration</li>
+            <li><strong>MCP (Model Context Protocol)</strong> — runtime for plugging in external tool servers</li>
+            <li><strong>Production architecture layers:</strong> Input → Knowledge (skill registry, memory) → Integration (MCP) → Execution (tool dispatch, caching) → Output (verified results) → Observability → Multi-agent coordination</li>
+            <li><strong>Claude Agent SDK, OpenAI Agents SDK, Codex SDK</strong> — HaaS frameworks providing pre-built loops, tools, context management</li>
+            <li><strong>HumanLayer</strong> — referenced for prompt length recommendations</li>
+        </ul>
+    </div>
+
+    <div class="relevance card">
+        <h2>Relevance</h2>
+        <p>The ratchet principle and hook-based enforcement give a concrete rollout playbook: instrument failures as they happen and harden the harness incrementally, which works well for teams that can't afford big upfront investment.</p>
+        <p>The "four pillars" customization model (system prompts, tools, context strategy, subagent structure) maps directly to what any team needs to decide when adopting an agentic workflow, regardless of which SDK or model they choose.</p>
+    </div>
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research · June 2026</footer>
+</body>
+</html>

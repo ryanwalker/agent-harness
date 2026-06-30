@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Harness & Agentic Engineering — Master Summary</title>
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #f0f2f5;
+            --card: #ffffff;
+            --border: #d0d7de;
+            --primary: #0969da;
+            --accent: #6e40c9;
+            --text: #1f2328;
+            --muted: #57606a;
+            --code-bg: #f6f8fa;
+            --header-bg: #0d1117;
+            --success-bg: #dafbe1; --success-text: #116329;
+            --warning-bg: #fff8c5; --warning-text: #7d4e00;
+            --info-bg: #ddf4ff; --info-text: #0550ae;
+            --danger-bg: #ffebe9; --danger-text: #a40e26;
+        }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.6; font-size: 15px; }
+
+        header { background: var(--header-bg); color: #e6edf3; padding: 48px 40px 36px; }
+        header h1 { font-size: 2rem; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.5px; }
+        header p { color: #8b949e; font-size: 0.95rem; }
+        header .meta { display: flex; gap: 10px; margin-top: 18px; flex-wrap: wrap; }
+        header .meta span { background: #21262d; border: 1px solid #30363d; border-radius: 6px; padding: 3px 12px; font-size: 0.78rem; color: #8b949e; }
+
+        nav { background: #fff; border-bottom: 1px solid var(--border); padding: 0 40px; display: flex; overflow-x: auto; }
+        nav a { display: block; padding: 13px 14px; text-decoration: none; color: var(--muted); font-size: 0.82rem; white-space: nowrap; border-bottom: 2px solid transparent; }
+        nav a:hover, nav a.active { color: var(--primary); border-bottom-color: var(--primary); }
+
+        main { max-width: 1080px; margin: 0 auto; padding: 40px 40px 80px; }
+
+        h2 { font-size: 1.35rem; font-weight: 700; margin: 48px 0 18px; padding-bottom: 10px; border-bottom: 2px solid var(--border); }
+        h3 { font-size: 1rem; font-weight: 700; margin: 24px 0 10px; }
+        p { font-size: 0.88rem; margin-bottom: 10px; }
+        ul, ol { padding-left: 20px; }
+        li { font-size: 0.87rem; margin-bottom: 5px; line-height: 1.6; }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 22px 26px; margin-bottom: 16px; }
+        .callout { border-radius: 8px; padding: 14px 18px; margin: 14px 0; border-left: 4px solid; font-size: 0.87rem; }
+        .callout strong { display: block; margin-bottom: 3px; }
+        .callout-info { background: var(--info-bg); border-color: var(--primary); color: var(--info-text); }
+        .callout-success { background: var(--success-bg); border-color: #2da44e; color: var(--success-text); }
+        .callout-warning { background: var(--warning-bg); border-color: #d4a72c; color: var(--warning-text); }
+        .callout-danger { background: var(--danger-bg); border-color: #cf222e; color: var(--danger-text); }
+
+        .equation-hero { background: linear-gradient(135deg, #0d1117, #161b22); border-radius: 12px; padding: 36px 40px; text-align: center; margin: 20px 0; color: white; }
+        .equation-hero .eq { font-size: 1.7rem; font-weight: 700; color: #58a6ff; margin-bottom: 16px; }
+        .equation-hero .breakdown { display: flex; justify-content: center; gap: 40px; flex-wrap: wrap; }
+        .eq-part .pct { font-size: 2.8rem; font-weight: 800; line-height: 1; }
+        .eq-part .pct.model { color: #8b949e; }
+        .eq-part .pct.harness { color: #58a6ff; }
+        .eq-part .label { font-size: 0.82rem; color: #8b949e; margin-top: 4px; }
+        .eq-divider { font-size: 2rem; color: #30363d; display: flex; align-items: center; }
+        .equation-hero .evidence { color: #8b949e; font-size: 0.82rem; margin-top: 18px; line-height: 1.6; }
+
+        .spectrum { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px; margin: 16px 0; border-radius: 10px; overflow: hidden; }
+        .spec-item { padding: 18px 16px; }
+        .spec-item h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 8px; }
+        .spec-item ul { list-style: none; font-size: 0.78rem; line-height: 1.85; padding: 0; }
+        .spec-item li { margin: 0; }
+        .spec-item.vibe { background: #fff1f0; } .spec-item.vibe h4 { color: #a8071a; }
+        .spec-item.structured { background: #fffbe6; } .spec-item.structured h4 { color: #7d4e00; }
+        .spec-item.agentic { background: #f0fff4; } .spec-item.agentic h4 { color: #135200; }
+
+        .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+        @media (max-width: 680px) { .two-col, .spectrum { grid-template-columns: 1fr; } }
+
+        .agent-parts { display: flex; gap: 8px; margin: 16px 0; flex-wrap: wrap; }
+        .agent-part { flex: 1; min-width: 130px; background: var(--code-bg); border: 1px solid var(--border); border-top: 3px solid var(--primary); border-radius: 8px; padding: 14px 14px; text-align: center; }
+        .agent-part h4 { font-size: 0.83rem; font-weight: 700; margin-bottom: 4px; }
+        .agent-part p { font-size: 0.75rem; color: var(--muted); margin: 0; }
+
+        .context-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 14px 0; }
+        @media (max-width: 680px) { .context-grid { grid-template-columns: 1fr 1fr; } }
+        .ctx-card { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 12px 14px; }
+        .ctx-card .icon { font-size: 1.2rem; margin-bottom: 5px; }
+        .ctx-card h4 { font-size: 0.82rem; font-weight: 700; margin-bottom: 3px; }
+        .ctx-card p { font-size: 0.75rem; color: var(--muted); margin: 0; }
+
+        .split-row { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
+        .split-card { border-radius: 8px; padding: 16px 18px; }
+        .split-card.static { background: #fff7ed; border: 1px solid #fdba74; }
+        .split-card.dynamic { background: #eff6ff; border: 1px solid #93c5fd; }
+        .split-card h4 { font-size: 0.87rem; font-weight: 700; margin-bottom: 8px; }
+        .split-card ul { font-size: 0.8rem; }
+        .split-card .badge { display: inline-block; font-size: 0.68rem; font-weight: 700; padding: 2px 8px; border-radius: 100px; margin-bottom: 8px; }
+        .static .badge { background: #fed7aa; color: #9a3412; }
+        .dynamic .badge { background: #bfdbfe; color: #1e40af; }
+
+        .disclosure-row { display: flex; gap: 8px; margin: 14px 0; flex-wrap: wrap; align-items: stretch; }
+        .disclosure-step { flex: 1; min-width: 140px; padding: 14px; border-radius: 8px; text-align: center; }
+        .disclosure-step h4 { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 5px; }
+        .disclosure-step p { font-size: 0.78rem; margin: 0; }
+        .ds-1 { background: #f6f8fa; border: 1px solid var(--border); }
+        .ds-2 { background: #ddf4ff; border: 1px solid #93c5fd; color: #0550ae; }
+        .ds-3 { background: #dafbe1; border: 1px solid #86efac; color: #116329; }
+        .disclosure-arrow { display: flex; align-items: center; color: var(--muted); font-size: 1.2rem; padding: 0 4px; }
+
+        .factory { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 16px 0; }
+        .factory-zone { border-radius: 10px; padding: 18px; }
+        .factory-zone.dev { background: #eff6ff; border: 2px solid #93c5fd; }
+        .factory-zone.floor { background: #f0fdf4; border: 2px solid #86efac; }
+        .factory-zone h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 12px; }
+        .fstep { background: white; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem; margin-bottom: 6px; }
+        .farrow { text-align: center; color: var(--muted); font-size: 0.9rem; margin: 2px 0; }
+        .ffeedback { background: #fef9c3; border: 1px dashed #d4a72c; border-radius: 6px; padding: 6px 10px; font-size: 0.73rem; color: #7d4e00; margin-top: 6px; text-align: center; }
+        .foutput { background: #f0fdf4; border: 1px solid #86efac; border-radius: 6px; padding: 8px 12px; font-size: 0.8rem; text-align: center; margin-top: 6px; color: #116329; font-weight: 600; }
+
+        .steps { margin: 14px 0; }
+        .step { display: flex; gap: 14px; margin-bottom: 14px; align-items: flex-start; }
+        .step-num { min-width: 30px; height: 30px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.82rem; flex-shrink: 0; }
+        .step-content h4 { font-size: 0.88rem; font-weight: 700; margin-bottom: 2px; }
+        .step-content p { font-size: 0.82rem; color: var(--muted); margin: 0; }
+
+        .review-vars { display: flex; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
+        .review-var { flex: 1; min-width: 140px; text-align: center; padding: 14px; background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; }
+        .review-var .icon { font-size: 1.4rem; }
+        .review-var h4 { font-size: 0.83rem; font-weight: 700; margin: 6px 0 3px; }
+        .review-var p { font-size: 0.74rem; color: var(--muted); margin: 0; }
+
+        .tiers { margin: 14px 0; }
+        .tier { display: flex; gap: 14px; padding: 12px 16px; border-radius: 8px; margin-bottom: 8px; font-size: 0.84rem; }
+        .tier-label { font-size: 0.73rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; min-width: 110px; }
+        .tier.high { background: #ffebe9; border-left: 4px solid #cf222e; } .tier.high .tier-label { color: #cf222e; }
+        .tier.med { background: #fff8c5; border-left: 4px solid #d4a72c; } .tier.med .tier-label { color: #9a6700; }
+        .tier.low { background: #dafbe1; border-left: 4px solid #2da44e; } .tier.low .tier-label { color: #1a7f37; }
+
+        table { width: 100%; border-collapse: collapse; font-size: 0.84rem; }
+        th { background: var(--code-bg); border: 1px solid var(--border); padding: 9px 13px; text-align: left; font-size: 0.76rem; text-transform: uppercase; letter-spacing: 0.4px; color: var(--muted); font-weight: 600; }
+        td { border: 1px solid var(--border); padding: 9px 13px; vertical-align: top; }
+        tr:nth-child(even) td { background: #fafbfc; }
+        td strong { color: var(--primary); }
+
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0; }
+        .stat-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px; text-align: center; }
+        .stat-card .num { font-size: 1.9rem; font-weight: 800; color: var(--primary); line-height: 1; margin-bottom: 4px; }
+        .stat-card .desc { font-size: 0.76rem; color: var(--muted); line-height: 1.4; }
+        .stat-card .source { font-size: 0.68rem; color: #8b949e; margin-top: 5px; font-style: italic; }
+
+        .verify-row { display: flex; gap: 12px; margin: 14px 0; flex-wrap: wrap; }
+        .verify-card { flex: 1; min-width: 160px; padding: 16px; border-radius: 8px; }
+        .verify-card h4 { font-size: 0.83rem; font-weight: 700; margin-bottom: 6px; }
+        .verify-card p { font-size: 0.78rem; margin: 0; }
+        .vc-1 { background: #f0fdf4; border: 1px solid #86efac; color: #116329; }
+        .vc-2 { background: #ddf4ff; border: 1px solid #93c5fd; color: #0550ae; }
+        .vc-3 { background: #fff8c5; border: 1px solid #d4a72c; color: #9a6700; }
+
+        .standards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin: 14px 0; }
+        .std-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 15px; }
+        .std-card h4 { font-size: 0.83rem; font-weight: 700; color: var(--accent); margin-bottom: 5px; }
+        .std-card p { font-size: 0.77rem; color: var(--muted); margin: 0; }
+
+        .red-flags { list-style: none; margin: 12px 0; padding: 0; }
+        .red-flags li { padding: 8px 13px; border-radius: 6px; margin-bottom: 6px; font-size: 0.84rem; background: #ffebe9; border-left: 3px solid #cf222e; }
+        .red-flags li::before { content: '⚠ '; color: #cf222e; }
+
+        .interview-list { list-style: none; margin: 14px 0; padding: 0; }
+        .interview-list li { padding: 11px 16px 11px 36px; border-radius: 8px; background: var(--code-bg); border: 1px solid var(--border); margin-bottom: 8px; font-size: 0.86rem; position: relative; }
+        .interview-list li::before { content: '"'; position: absolute; left: 14px; color: var(--primary); font-size: 1.2rem; font-weight: 700; line-height: 1.4; }
+
+        .file-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 10px; margin: 16px 0; }
+        .file-link { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 15px 17px; text-decoration: none; color: var(--text); display: block; transition: border-color 0.15s; }
+        .file-link:hover { border-color: var(--primary); }
+        .file-link .num { font-size: 0.72rem; color: var(--muted); margin-bottom: 3px; }
+        .file-link h4 { font-size: 0.88rem; font-weight: 600; color: var(--primary); margin-bottom: 4px; }
+        .file-link p { font-size: 0.76rem; color: var(--muted); margin: 0; }
+
+        pre { background: #0d1117; color: #e6edf3; border-radius: 8px; padding: 16px 18px; overflow-x: auto; font-size: 0.81rem; line-height: 1.6; margin: 10px 0; }
+        code { font-family: 'SF Mono', 'Cascadia Code', 'Fira Code', monospace; }
+        p code, li code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 4px; padding: 1px 5px; font-size: 0.84em; }
+
+        .routing-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin: 12px 0; }
+        .routing-card { border-radius: 8px; padding: 16px 18px; }
+        .routing-card.frontier { border-left: 4px solid var(--accent); background: #f5f0ff; }
+        .routing-card.cheap { border-left: 4px solid #2da44e; background: #f0fdf4; }
+        .routing-card h4 { font-size: 0.87rem; font-weight: 700; margin-bottom: 8px; }
+        .routing-card.frontier h4 { color: var(--accent); }
+        .routing-card.cheap h4 { color: #1a7f37; }
+
+        footer { background: var(--header-bg); color: #8b949e; text-align: center; padding: 22px 40px; font-size: 0.78rem; }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>Agent Harness &amp; Agentic Engineering</h1>
+    <p>Master Summary — Synthesized from 6 sources including the full Google/Kaggle whitepaper (51 pages, May 2026)</p>
+    <div class="meta">
+        <span>6 Articles</span>
+        <span>Google Whitepaper (51 pp., read in full)</span>
+        <span>Addy Osmani Series</span>
+        <span>Stack-Agnostic</span>
+        <span>June 2026</span>
+    </div>
+</header>
+
+<nav>
+    <a href="00-master-summary.html" class="active">Master Summary</a>
+    <a href="01-new-sdlc-vibe-coding.html">01 · New SDLC</a>
+    <a href="02-agent-harness-engineering.html">02 · Harness Engineering</a>
+    <a href="03-whitepaper-new-sdlc-vibe-coding.html">03 · Whitepaper</a>
+    <a href="04-agentic-code-review.html">04 · Code Review</a>
+    <a href="05-adk-coding-with-ai-cli.html">05 · ADK CLI</a>
+    <a href="06-claude-code-large-codebases.html">06 · Large Codebases</a>
+</nav>
+
+<main>
+
+<!-- CORE EQUATION -->
+<h2>The One Equation to Know</h2>
+<div class="equation-hero">
+    <div class="eq">Agent = Model + Harness</div>
+    <div class="breakdown">
+        <div class="eq-part">
+            <div class="pct model">~10%</div>
+            <div class="label">Model — reasoning engine</div>
+        </div>
+        <div class="eq-divider">+</div>
+        <div class="eq-part">
+            <div class="pct harness">~90%</div>
+            <div class="label">Harness — everything else</div>
+        </div>
+    </div>
+    <p class="evidence">
+        Terminal Bench 2.0: harness-only change moved an agent from outside Top 30 → Top 5. No model change.<br>
+        LangChain study: +13.7 benchmark points from harness changes alone on a fixed model.
+    </p>
+</div>
+<div class="callout callout-info">
+    <strong>Key insight</strong>
+    Most agent failures, examined honestly, are configuration failures — not model failures. Fix the harness before changing the model.
+</div>
+
+<!-- FIVE PARTS -->
+<h2>Five Parts of Every Agent</h2>
+<div class="agent-parts">
+    <div class="agent-part"><h4>Model</h4><p>Reasoning engine. Reads context, decides next step, produces output.</p></div>
+    <div class="agent-part"><h4>Tools</h4><p>Connect model to the world: APIs, code execution, databases, other agents.</p></div>
+    <div class="agent-part"><h4>Memory</h4><p>State: past interactions, project rules, context across sessions.</p></div>
+    <div class="agent-part"><h4>Orchestration</h4><p>The loop: assembles context, dispatches tool calls, captures results, decides whether to continue.</p></div>
+    <div class="agent-part"><h4>Deployment</h4><p>Hosting, identity, observability, production infrastructure.</p></div>
+</div>
+
+<h3>Harness Components (What Surrounds the Model)</h3>
+<div class="card">
+    <ol>
+        <li><strong>Instructions / Rule Files</strong> — <code>AGENTS.md</code>, <code>CLAUDE.md</code>, <code>GEMINI.md</code>, skill files, subagent prompts. Versioned in source control.</li>
+        <li><strong>Tools</strong> — functions, MCP servers, APIs the agent can call + prose for when and how to call them.</li>
+        <li><strong>Sandboxes / Execution Environments</strong> — what the agent can reach and what it cannot.</li>
+        <li><strong>Orchestration Logic</strong> — subagent spawning, model routing, handoffs between specialists.</li>
+        <li><strong>Guardrails / Hooks</strong> — deterministic code at lifecycle points (pre-tool-call, post-file-edit, pre-commit). Things the agent should never forget but often does.</li>
+        <li><strong>Observability</strong> — logs, traces, evals, cost and latency metering. Without this there is no way to tell whether the agent is quietly drifting.</li>
+    </ol>
+</div>
+
+<!-- THE SPECTRUM -->
+<h2>The Vibe Coding → Agentic Engineering Spectrum</h2>
+<div class="callout callout-warning">
+    Position on this spectrum is determined by <strong>verification rigor</strong>, not which tool you use. The same coding agent can be used at either end.
+</div>
+<div class="spectrum">
+    <div class="spec-item vibe">
+        <h4>🎲 Vibe Coding</h4>
+        <ul>
+            <li>Casual prompts</li>
+            <li>"Does it seem to work?"</li>
+            <li>No rule files</li>
+            <li>No automated evals</li>
+            <li>Risk: HIGH</li>
+            <li>Right for: prototypes, hackathons</li>
+        </ul>
+    </div>
+    <div class="spec-item structured">
+        <h4>⚙️ Structured AI-Assisted</h4>
+        <ul>
+            <li>Detailed prompts + constraints</li>
+            <li>Manual testing + spot-checks</li>
+            <li>Informal rule files</li>
+            <li>Selective review</li>
+            <li>Risk: MODERATE</li>
+            <li>Right for: features in established codebases</li>
+        </ul>
+    </div>
+    <div class="spec-item agentic">
+        <h4>🏭 Agentic Engineering</h4>
+        <ul>
+            <li>Formal specs + architecture docs</li>
+            <li>Automated evals + CI/CD gates</li>
+            <li>Versioned, PR-reviewed rule files</li>
+            <li>Comprehensive review</li>
+            <li>Risk: LOW</li>
+            <li>Right for: production systems at scale</li>
+        </ul>
+    </div>
+</div>
+
+<h3>Economics: Why Vibe Coding Loses at Scale</h3>
+<div class="two-col">
+    <div class="card" style="border-top: 3px solid #cf222e;">
+        <h4 style="color:#cf222e; margin-bottom:10px;">Vibe Coding — Low CapEx, High OpEx</h4>
+        <ul>
+            <li>Token burn from unstructured prompting loops</li>
+            <li>Maintenance tax: structural inconsistency compounds</li>
+            <li>Security remediation</li>
+            <li>Context collapse on large tasks</li>
+            <li style="color:#cf222e; font-weight:700;">Crossover: 3–10× more expensive per feature at scale</li>
+        </ul>
+    </div>
+    <div class="card" style="border-top: 3px solid #2da44e;">
+        <h4 style="color:#1a7f37; margin-bottom:10px;">Agentic Engineering — High CapEx, Low OpEx</h4>
+        <ul>
+            <li>Upfront: API schemas, eval suites, structured context</li>
+            <li>Marginal cost per feature drops sharply after setup</li>
+            <li>Dense rule files increase first-pass success rate</li>
+            <li>Intelligent model routing keeps ongoing costs down</li>
+            <li style="color:#1a7f37; font-weight:700;">Compounds across projects over time</li>
+        </ul>
+    </div>
+</div>
+
+<!-- CONTEXT ENGINEERING -->
+<h2>Context Engineering</h2>
+<p>Context engineering is the primary optimization surface. The six context types:</p>
+<div class="context-grid">
+    <div class="ctx-card"><div class="icon">📋</div><h4>Instructions</h4><p>Core role, goals, operational boundaries</p></div>
+    <div class="ctx-card"><div class="icon">📚</div><h4>Knowledge</h4><p>Retrieved docs, architecture diagrams, domain data</p></div>
+    <div class="ctx-card"><div class="icon">🧠</div><h4>Memory</h4><p>Short-term session logs + long-term persistent state</p></div>
+    <div class="ctx-card"><div class="icon">🔍</div><h4>Examples</h4><p>Few-shot behavioral demos and codebase reference patterns</p></div>
+    <div class="ctx-card"><div class="icon">🔧</div><h4>Tools</h4><p>Precise definitions of APIs, scripts, external services</p></div>
+    <div class="ctx-card"><div class="icon">🛡️</div><h4>Guardrails</h4><p>Hard constraints, formatting rules, safety validations</p></div>
+</div>
+
+<h3>Static vs. Dynamic Context Split</h3>
+<div class="callout callout-info"><strong>This boundary is a first-class architectural decision.</strong> Treat it like code — version it, review it in PRs, assign ownership.</div>
+<div class="split-row">
+    <div class="split-card static">
+        <span class="badge">STATIC — loads every turn</span>
+        <h4>Always-On Context</h4>
+        <ul>
+            <li>System instructions</li>
+            <li>Rule files (AGENTS.md, CLAUDE.md)</li>
+            <li>Core guardrails</li>
+            <li>Global memory</li>
+        </ul>
+        <p style="font-size:0.74rem; color:#9a3412; margin-top:8px;">⚠ Token cost: high. Keep lean (~60 lines/file max).</p>
+    </div>
+    <div class="split-card dynamic">
+        <span class="badge">DYNAMIC — loads on demand</span>
+        <h4>On-Demand Context</h4>
+        <ul>
+            <li>Agent Skills (triggered by task match)</li>
+            <li>Tool results (retrieved during execution)</li>
+            <li>RAG documents</li>
+            <li>Windowed session history</li>
+        </ul>
+        <p style="font-size:0.74rem; color:#1e40af; margin-top:8px;">✓ Pay only when needed. Heavy references go here.</p>
+    </div>
+</div>
+
+<h3>Progressive Disclosure — The Loading Pattern</h3>
+<div class="disclosure-row">
+    <div class="disclosure-step ds-1"><h4>1 · Startup</h4><p>Lightweight metadata only</p></div>
+    <div class="disclosure-arrow">→</div>
+    <div class="disclosure-step ds-2"><h4>2 · Task Match</h4><p>Full skill instructions load</p></div>
+    <div class="disclosure-arrow">→</div>
+    <div class="disclosure-step ds-3"><h4>3 · Execution</h4><p>Deep reference material pulled on demand</p></div>
+</div>
+
+<!-- FACTORY MODEL -->
+<h2>The Factory Model</h2>
+<div class="callout callout-info"><strong>Developer's primary output is not code — it's the system that produces code.</strong></div>
+<div class="factory">
+    <div class="factory-zone dev">
+        <h4>👨‍💻 Developer Zone</h4>
+        <div class="fstep">📝 Define Specs &amp; Acceptance Criteria</div>
+        <div class="farrow">↓</div>
+        <div class="fstep">🛡️ Design Guardrails</div>
+        <div class="farrow">↓</div>
+        <div class="fstep">✅ Review &amp; Approve Output</div>
+    </div>
+    <div class="factory-zone floor">
+        <h4>🏭 Agent Factory Floor</h4>
+        <div class="fstep">🗂 Specs / Context / Requirements</div>
+        <div class="farrow">↓</div>
+        <div class="fstep">🧠 Planning Agent</div>
+        <div class="farrow">↓</div>
+        <div class="fstep">💻 Coding Agent</div>
+        <div class="farrow">↓</div>
+        <div class="fstep">🧪 Tests &amp; Verification</div>
+        <div class="ffeedback">↺ Failure → feedback loop back to Planning Agent</div>
+        <div class="foutput">✅ Verified Output</div>
+    </div>
+</div>
+
+<!-- DEVELOPER MODES -->
+<h2>Developer Modes</h2>
+<div class="two-col">
+    <div class="card">
+        <h3 style="margin-top:0;">🎹 Conductor Mode</h3>
+        <ul>
+            <li>Real-time, in-IDE, keystroke-level control</li>
+            <li>Developer always in the loop</li>
+            <li>Single-file scope, immediate feedback</li>
+            <li>Best for: exploration, prototyping, learning new APIs</li>
+            <li style="color:#cf222e;">Risk: becomes a bottleneck if directing every keystroke</li>
+        </ul>
+    </div>
+    <div class="card">
+        <h3 style="margin-top:0;">🎛 Orchestrator Mode</h3>
+        <ul>
+            <li>Async, goal-level delegation</li>
+            <li>Review outcomes, not generation</li>
+            <li>Multi-file scope, delayed feedback</li>
+            <li>Best for: migrations, test gen, refactors</li>
+            <li>Requires: specification + evaluation skills</li>
+        </ul>
+    </div>
+</div>
+
+<!-- ROLLOUT PLAYBOOK -->
+<h2>Build &amp; Rollout Playbook</h2>
+<h3>Starting (Individual)</h3>
+<div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Create a rule file in every project</h4><p>Start with 10 lines: stack version pins, architectural patterns, banned packages, test locations. Filename: <code>AGENTS.md</code> or <code>CLAUDE.md</code>.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Apply the Ratchet Principle from day one</h4><p>Every time the agent makes a mistake, add a rule that prevents recurrence. Failures are permanent signals, not one-offs.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Write tests before generating code</h4><p>Tests become the specification. They communicate intent more precisely than any natural-language prompt.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><h4>Wire hooks at lifecycle points</h4><p>Pre-tool-call, post-file-edit, pre-commit. Gate destructive commands behind explicit approval.</p></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><h4>Keep tool outputs off the context window</h4><p>Large outputs go to disk; pass paths instead. Use compaction/summarization when context fills.</p></div></div>
+</div>
+
+<h3>Rolling Out to a Team</h3>
+<div class="steps">
+    <div class="step"><div class="step-num">1</div><div class="step-content"><h4>Assign a DRI before expanding access</h4><p>One person (or small team) owns the harness config. Without this, setups fragment and become tribal knowledge.</p></div></div>
+    <div class="step"><div class="step-num">2</div><div class="step-content"><h4>Governance first, breadth second</h4><p>Define approved skills, code review requirements, and limited initial scope before rolling out to the team.</p></div></div>
+    <div class="step"><div class="step-num">3</div><div class="step-content"><h4>Treat rule files as production code</h4><p>Require PR review. Version alongside application code. Assign named owners.</p></div></div>
+    <div class="step"><div class="step-num">4</div><div class="step-content"><h4>Distribute as plugins, not tribal knowledge</h4><p>Bundle working setups and distribute org-wide. Prevents fragmentation and ensures consistency.</p></div></div>
+    <div class="step"><div class="step-num">5</div><div class="step-content"><h4>Audit CLAUDE.md every 3–6 months</h4><p>Remove compensatory workarounds as model capabilities improve. Config written for older models can constrain newer ones.</p></div></div>
+    <div class="step"><div class="step-num">6</div><div class="step-content"><h4>Set the bar at the eval, not the demo</h4><p>A demo proves success once. A passing eval suite proves reliable operation. Require eval coverage before any agent ships into shared workflows.</p></div></div>
+</div>
+
+<!-- AGENTIC CODE REVIEW -->
+<h2>Agentic Code Review</h2>
+<div class="stats-grid">
+    <div class="stat-card"><div class="num" style="color:#cf222e;">4×</div><div class="desc">raw code output with AI</div><div class="source">industry data, 2026</div></div>
+    <div class="stat-card"><div class="num" style="color:#cf222e;">12%</div><div class="desc">more delivered value (vs. 4× output)</div><div class="source">industry data, 2026</div></div>
+    <div class="stat-card"><div class="num" style="color:#cf222e;">54%</div><div class="desc">defect rates in AI-heavy codebases (vs. 9% baseline)</div><div class="source">2026</div></div>
+    <div class="stat-card"><div class="num">93.4%</div><div class="desc">of the time, different AI reviewers flag different lines</div><div class="source">rationale for heterogeneous review</div></div>
+</div>
+
+<h3>Review Depth Framework — Three Variables Per PR</h3>
+<div class="review-vars">
+    <div class="review-var"><div class="icon">💥</div><h4>Blast Radius</h4><p>Consequence of failure</p></div>
+    <div class="review-var"><div class="icon">⏳</div><h4>Code Lifespan</h4><p>Throwaway vs. long-lived</p></div>
+    <div class="review-var"><div class="icon">👥</div><h4>Knowledge Distribution</h4><p>Solo-owned vs. team-shared</p></div>
+</div>
+
+<h3>Risk-Tiered Review</h3>
+<div class="tiers">
+    <div class="tier high"><div class="tier-label">HIGH RISK<br>Auth / Payments / Infra</div><div>Dual AI review + types + tests + human sign-off + security pass</div></div>
+    <div class="tier med"><div class="tier-label">MEDIUM RISK<br>Business Logic</div><div>Types + tests + human sign-off</div></div>
+    <div class="tier low"><div class="tier-label">LOW RISK<br>Config / Boilerplate</div><div>Linter + quick glance</div></div>
+</div>
+
+<h3>Red Flags in Agent PRs</h3>
+<ul class="red-flags">
+    <li>Altered test assertions — check tests <em>before</em> implementation code</li>
+    <li>Lowered coverage thresholds or skipped linting</li>
+    <li>Untrusted input flowing into prompt calls (prompt injection surface)</li>
+    <li>Diffs too large to meaningfully review (agent PRs are 51% larger on average)</li>
+    <li>Hallucinated dependencies — verify every import is a real package</li>
+    <li>Changes that weaken CI gates</li>
+</ul>
+<div class="callout callout-danger"><strong>A human must own the merge decision.</strong> Accountability, strategic judgment, and requirement-level thinking do not delegate.</div>
+
+<!-- NAMED PATTERNS -->
+<h2>Named Patterns</h2>
+<table>
+    <thead><tr><th>Pattern</th><th>Description</th><th>Source</th></tr></thead>
+    <tbody>
+        <tr><td><strong>Ratchet Principle</strong></td><td>Every agent failure permanently hardens the harness config. Failures are signals, not one-offs.</td><td>Harness Eng.</td></tr>
+        <tr><td><strong>Progressive Disclosure</strong></td><td>Metadata at startup → full instructions on task match → heavy docs on execution.</td><td>Whitepaper</td></tr>
+        <tr><td><strong>Agent Skills</strong></td><td>Portable packages of procedural knowledge loaded dynamically by task match. Solves context rot and portability.</td><td>Whitepaper</td></tr>
+        <tr><td><strong>Quality Flywheel</strong></td><td>Evaluate → cluster root causes → optimize prompts/tools → verify against regression suite → monitor production. Each cycle compounds.</td><td>Whitepaper</td></tr>
+        <tr><td><strong>Factory Model</strong></td><td>Developer Zone (specs → guardrails → review) feeds Agent Factory Floor (planning → coding → tests → verified output, with failure feedback loop).</td><td>Whitepaper</td></tr>
+        <tr><td><strong>Ralph Loops</strong></td><td>Inject original prompt into fresh context windows to continue long-horizon tasks without context decay.</td><td>Harness Eng.</td></tr>
+        <tr><td><strong>Planner / Generator / Evaluator</strong></td><td>Separate agents for planning, generating, and evaluating. Prevents self-review bias.</td><td>Harness Eng.</td></tr>
+        <tr><td><strong>Sprint Contracts</strong></td><td>Negotiate done-conditions (acceptance criteria) with the agent before implementation begins.</td><td>Harness Eng.</td></tr>
+        <tr><td><strong>Conductor / Orchestrator Modes</strong></td><td>Two developer operating modes within the same session. Switch based on task clarity and scope.</td><td>Whitepaper</td></tr>
+        <tr><td><strong>Heterogeneous Reviewer Pattern</strong></td><td>Run 2+ deliberately different AI reviewers in parallel. They flag different lines 93.4% of the time.</td><td>Code Review</td></tr>
+        <tr><td><strong>Intent Reconstruction</strong></td><td>Agents discard reasoning before producing diffs. Require agents to attach decision logs to PRs.</td><td>Code Review</td></tr>
+        <tr><td><strong>Risk-Tiered Review</strong></td><td>Match review effort to blast radius × lifespan × knowledge distribution.</td><td>Code Review</td></tr>
+        <tr><td><strong>HaaS</strong></td><td>Harness-as-a-Service: industry shift from raw LLM APIs to pre-built harness frameworks.</td><td>Harness Eng.</td></tr>
+        <tr><td><strong>The 80% Problem</strong></td><td>Agents produce the first ~80% of any feature fast. The last 20% — edge cases, integration seams — requires human domain judgment.</td><td>Whitepaper</td></tr>
+    </tbody>
+</table>
+
+<!-- VERIFICATION -->
+<h2>Verification — The New Engineering Craft</h2>
+<div class="callout callout-success"><strong>"Generation is solved. Verification, judgment, and direction are the new craft."</strong><br>Set the bar at the eval, not the demo.</div>
+<div class="verify-row">
+    <div class="verify-card vc-1"><h4>1 · Tests</h4><p>Deterministic input/output coverage. Written before generation — they become the specification.</p></div>
+    <div class="verify-card vc-2"><h4>2 · Output Evaluation</h4><p>Is the final result correct? Use LM-as-judge for non-deterministic outputs.</p></div>
+    <div class="verify-card vc-3"><h4>3 · Trajectory Evaluation</h4><p>Was the reasoning path and tool call sequence sound? A correct output via wrong steps is a latent failure.</p></div>
+</div>
+
+<!-- TOOL-AGNOSTIC STANDARDS -->
+<h2>Tool-Agnostic Standards (Avoid Lock-In)</h2>
+<div class="standards-grid">
+    <div class="std-card"><h4>MCP</h4><p>Model Context Protocol. Open standard for connecting tools/data to any AI assistant. Supported across tools.</p></div>
+    <div class="std-card"><h4>A2A</h4><p>Agent2Agent Protocol. Cross-agent delegation and handoff. Adopt now to avoid re-platforming later.</p></div>
+    <div class="std-card"><h4>llms.txt</h4><p>Machine-readable library documentation index. Any library publishing this can be served to any MCP client.</p></div>
+    <div class="std-card"><h4>mcpdoc</h4><p>Serves any <code>llms.txt</code>-indexed doc site as an MCP server. Not ADK-specific — works for any library.</p></div>
+    <div class="std-card"><h4>AGENTS.md / CLAUDE.md</h4><p>Rule file conventions supported across tools. Version in source control alongside application code.</p></div>
+</div>
+
+<h3>Shared Docs MCP Setup (team rollout pattern)</h3>
+<pre><code>{
+  "mcpServers": {
+    "your-library-docs": {
+      "command": "uvx",
+      "args": [
+        "--from", "mcpdoc", "mcpdoc",
+        "--urls", "LibName:https://your-lib.dev/llms.txt",
+        "--transport", "stdio"
+      ]
+    }
+  }
+}</code></pre>
+<p>Commit as <code>mcp.json</code> in the project repo — every engineer's IDE gets the same documentation context automatically.</p>
+
+<!-- MODEL ROUTING -->
+<h2>Model Routing (Direct Cost Lever)</h2>
+<div class="routing-row">
+    <div class="routing-card frontier"><h4>Frontier Models</h4><ul><li>Complex reasoning</li><li>Architecture decisions</li><li>Unfamiliar codebases</li><li>Initial implementation</li></ul></div>
+    <div class="routing-card cheap"><h4>Smaller / Cheaper Models</h4><ul><li>Test generation</li><li>CI checks</li><li>Code review passes</li><li>Deterministic / repetitive tasks</li></ul></div>
+</div>
+<div class="callout callout-warning">Don't route everything to the most expensive model. Model routing is a direct financial lever.</div>
+
+<!-- DATA -->
+<h2>Data Worth Citing</h2>
+<div class="stats-grid">
+    <div class="stat-card"><div class="num">85%</div><div class="desc">of professional developers use AI coding agents regularly</div><div class="source">GetPanto / Index.dev, early 2026</div></div>
+    <div class="stat-card"><div class="num">51%</div><div class="desc">use AI coding agents daily</div><div class="source">same survey</div></div>
+    <div class="stat-card"><div class="num">41%</div><div class="desc">of all new code is AI-generated</div><div class="source">2026 industry data</div></div>
+    <div class="stat-card"><div class="num" style="color:#cf222e;">19%</div><div class="desc">slower — experienced devs on complex tasks with AI</div><div class="source">METR RCT, Feb 2026</div></div>
+    <div class="stat-card"><div class="num">25–39%</div><div class="desc">self-reported productivity gains from structured AI use</div><div class="source">industry surveys, 2026</div></div>
+    <div class="stat-card"><div class="num">+13.7</div><div class="desc">benchmark points from harness changes alone (fixed model)</div><div class="source">LangChain study</div></div>
+</div>
+<div class="callout callout-warning"><strong>The gap to watch:</strong> Self-reported gains (25–39%) conflict with the only controlled-experiment result (METR: 19% slower for experienced devs on complex tasks). The whitepaper does not reconcile these. The METR result applies specifically to complex, unfamiliar tasks — simpler, well-specified work likely does show real gains.</div>
+
+<!-- INTERVIEW TALKING POINTS -->
+<h2>Interview Talking Points</h2>
+<ul class="interview-list">
+    <li>Most agent failures are harness failures. I start by auditing the configuration, not the model.</li>
+    <li>Verification is the high-leverage skill now. Generation is commoditized. I can demonstrate I have a review system, not just a generation workflow.</li>
+    <li>The 80% problem is real — I keep humans in the loop for edge cases and integration seams where models lack domain context.</li>
+    <li>My PR review framework: blast radius × lifespan × knowledge distribution. I tier review effort based on consequence, not uniformly apply the same process to everything.</li>
+    <li>Every agent mistake is a permanent signal. I apply the Ratchet Principle — the failure goes into the harness config so it can't repeat.</li>
+    <li>Tests written before generation are the specification, not an afterthought. They communicate intent more precisely than any natural-language prompt.</li>
+    <li>I use heterogeneous reviewers because no single AI reviewer catches everything — they flag different lines 93.4% of the time.</li>
+    <li>Context engineering is an architectural decision, not a prompt-engineering trick. I version the static/dynamic boundary alongside application code.</li>
+</ul>
+
+<!-- FILE INDEX -->
+<h2>Article Files</h2>
+<div class="file-grid">
+    <a class="file-link" href="01-new-sdlc-vibe-coding.html"><div class="num">01</div><h4>The New SDLC: Vibe Coding</h4><p>Harness-first framing, context engineering, progressive disclosure, verification spectrum</p></a>
+    <a class="file-link" href="02-agent-harness-engineering.html"><div class="num">02</div><h4>Agent Harness Engineering</h4><p>Four pillars, Ratchet Principle, Ralph Loops, Planner/Generator/Evaluator split</p></a>
+    <a class="file-link" href="03-whitepaper-new-sdlc-vibe-coding.html"><div class="num">03</div><h4>Google Whitepaper (51 pp.)</h4><p>Full spectrum framework, Factory Model, Quality Flywheel, economics — read in full from PDF</p></a>
+    <a class="file-link" href="04-agentic-code-review.html"><div class="num">04</div><h4>Agentic Code Review</h4><p>Risk-tiered review, intent reconstruction, heterogeneous reviewers, red flags</p></a>
+    <a class="file-link" href="05-adk-coding-with-ai-cli.html"><div class="num">05</div><h4>ADK: Coding with AI CLI</h4><p>mcpdoc + llms.txt pattern, MCP setup, google-agents-cli, shared docs for teams</p></a>
+    <a class="file-link" href="06-claude-code-large-codebases.html"><div class="num">06</div><h4>Claude Code in Large Codebases</h4><p>DRI pattern, governance-first rollout, plugins, layered CLAUDE.md, LSP setup</p></a>
+</div>
+
+</main>
+<footer>Agent Harness &amp; Agentic Engineering Research &nbsp;·&nbsp; June 2026 &nbsp;·&nbsp; Stack-agnostic</footer>
+</body>
+</html>
