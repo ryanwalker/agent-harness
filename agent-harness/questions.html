@@ -160,6 +160,34 @@ Eval(
       <p>The six types are: Instructions, Knowledge, Memory, Examples, Tools, and Guardrails. The paper distinguishes static context (always loaded) from dynamic context (loaded on demand via skills/RAG), but doesn't show how you wire that up.</p>
       <p>Concretely: how do you configure what goes in AGENTS.md vs. what lives in a skill file? How do skill files get triggered — is it keyword matching, LLM decision, or explicit invocation? How does RAG fit in for the Knowledge type?</p>
     </div>
+    <div class="answer">
+      <h4>Answer</h4>
+      <p><strong>Getting context in is easy; the real decision is what's always-on vs. fetched-on-demand.</strong> Your context window is a budget — spend it on what every turn needs and lazy-load the rest. Each of the six types maps to a mechanism and a load policy:</p>
+      <table style="width:100%; border-collapse:collapse; margin:10px 0 14px; font-size:13px;">
+        <thead>
+          <tr style="text-align:left; border-bottom:2px solid #34a853;">
+            <th style="padding:6px 8px; font-weight:700;">Type</th>
+            <th style="padding:6px 8px; font-weight:700;">Where it lives / how it's wired</th>
+            <th style="padding:6px 8px; font-weight:700;">Loaded</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom:1px solid #d6e8dc;"><td style="padding:6px 8px;"><strong>Instructions</strong></td><td style="padding:6px 8px;">AGENTS.md / CLAUDE.md, system prompt</td><td style="padding:6px 8px;">Static — always</td></tr>
+          <tr style="border-bottom:1px solid #d6e8dc;"><td style="padding:6px 8px;"><strong>Guardrails</strong></td><td style="padding:6px 8px;">System-prompt rules + harness-enforced permissions / hooks</td><td style="padding:6px 8px;">Static — always &amp; enforced</td></tr>
+          <tr style="border-bottom:1px solid #d6e8dc;"><td style="padding:6px 8px;"><strong>Tools</strong></td><td style="padding:6px 8px;">Function/tool schemas, MCP servers</td><td style="padding:6px 8px;">Static registration (can defer-discover)</td></tr>
+          <tr style="border-bottom:1px solid #d6e8dc;"><td style="padding:6px 8px;"><strong>Examples</strong></td><td style="padding:6px 8px;">Few-shot in instructions, or pulled from skills / retrieval</td><td style="padding:6px 8px;">Either — static if core, else fetched</td></tr>
+          <tr style="border-bottom:1px solid #d6e8dc;"><td style="padding:6px 8px;"><strong>Knowledge</strong></td><td style="padding:6px 8px;">RAG / vector store, MCP resources, skill reference files</td><td style="padding:6px 8px;">Dynamic — on demand</td></tr>
+          <tr><td style="padding:6px 8px;"><strong>Memory</strong></td><td style="padding:6px 8px;">Persistent store / files across sessions</td><td style="padding:6px 8px;">Hybrid — index static, recall on demand</td></tr>
+        </tbody>
+      </table>
+      <p>The three wiring questions that actually trip people up:</p>
+      <ol>
+        <li><strong>AGENTS.md vs. a skill — size and universality decide.</strong> <code>AGENTS.md</code> (the open, cross-tool standard; <code>CLAUDE.md</code> is Claude Code's flavor) holds the small, always-true stuff every task needs: project conventions, build/test commands, guardrails. If it's large, situational, or only relevant to some tasks, it goes in a skill so it doesn't tax every turn. Rule of thumb: if you wouldn't want it in the system prompt for <em>every</em> request, it's a skill — not AGENTS.md.</li>
+        <li><strong>Skills trigger by model decision, not keyword match.</strong> A skill is a folder with a <code>SKILL.md</code> whose YAML frontmatter has a <code>name</code> + <code>description</code>. Only that metadata is always loaded (a cheap index in the system prompt); the model reads the <code>description</code>, decides the skill is relevant, then pulls the full body from the filesystem — "progressive disclosure." So the description <em>is</em> the trigger: write it as "what it does <em>and</em> when to use it." Three loading levels: metadata (always) → SKILL.md body (on trigger) → bundled scripts / reference files (on demand, only their output costs tokens). Skills can also be invoked explicitly (e.g., a slash command), but model-decided is the default.</li>
+        <li><strong>RAG is how the Knowledge type scales past the window.</strong> Embed your docs / wiki / code into a vector store; at query time retrieve the top-k relevant chunks and inject them. You never load the whole corpus — just what this query needs. For a small, stable knowledge base, a skill reference file or an MCP resource is often simpler than standing up retrieval.</li>
+      </ol>
+      <p><strong>Default everything to dynamic; promote to static only when it earns it.</strong> Static context is fast and reliable but permanently taxes every turn, and the window is finite. Keep the always-on layer lean — instructions, guardrails, core tools — and load knowledge, niche examples, and specialist skills on demand. Treat that static/dynamic boundary as architecture and version it alongside the code.</p>
+    </div>
   </div>
 
   <div class="q-item">
