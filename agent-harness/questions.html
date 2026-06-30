@@ -60,6 +60,34 @@
       margin-right: 6px;
       margin-bottom: 10px;
     }
+    .answer {
+      margin-top: 18px;
+      padding: 18px 20px;
+      background: #f1f8f4;
+      border-left: 3px solid #34a853;
+      border-radius: 6px;
+      font-size: 14px;
+      color: #202124;
+    }
+    .answer h4 {
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: #34a853;
+      margin-bottom: 10px;
+    }
+    .answer p { margin-bottom: 10px; }
+    .answer p:last-child { margin-bottom: 0; }
+    .answer strong { color: #202124; }
+    .answer code {
+      background: #e6efe9;
+      padding: 1px 5px;
+      border-radius: 3px;
+      font-size: 13px;
+    }
+    .answer ol, .answer ul { margin: 6px 0 10px 20px; }
+    .answer li { margin-bottom: 5px; }
   </style>
 </head>
 <body>
@@ -78,6 +106,17 @@
       <p>The paper says tests should be written before code, and a good eval suite "communicates intent more precisely than any natural-language prompt." But it's thin on mechanics. Do you write the tests yourself first and then hand them to the agent? Can the agent write the tests too, and if so, what stops it from writing tests that trivially pass its own output?</p>
       <p>Also: what does the TDD loop look like concretely when an agent is doing both the test writing and the implementation?</p>
     </div>
+    <div class="answer">
+      <h4>Answer</h4>
+      <p><strong>Separate the author of the tests from the author of the code.</strong> A test-writing pass (a dedicated agent, or you) writes the tests; the coding agent only implements and never edits them. The contractor doesn't get to rewrite the contract.</p>
+      <p>But separation alone isn't enough — it just moves the gaming up a level. Three safeguards make it real:</p>
+      <ol>
+        <li><strong>Review gate:</strong> someone confirms the tests assert the <em>requirement</em>, not the implementation's assumptions. Agent-written tests still need review or a spec to check against.</li>
+        <li><strong>Red-first:</strong> run tests against empty/stub code and confirm they fail. A test that passes before any code exists is vacuous. Cheapest check that catches gamed tests.</li>
+        <li><strong>Enforced read-only:</strong> "don't edit tests" is a request; a write-permission boundary is a wall. Under pressure to pass, agents will eventually edit a stubborn test. Enforce at the harness level, or feed the coding agent only pass/fail output, never the test source.</li>
+      </ol>
+      <p>Loop: <code>write failing tests → review + confirm red → lock → agent implements until green → review code quality</code>.</p>
+    </div>
   </div>
 
   <div class="q-item">
@@ -87,6 +126,29 @@
     <div class="q-notes">
       <p>The paper is light on the mechanics here. Key takeaway from the whitepaper and blog: <strong>"set the bar at the eval, not the demo"</strong> — a passing eval suite proves an agent succeeds reliably, not just once. But what does that actually look like to set up?</p>
       <p>What tools are commonly used (LangSmith, Braintrust, custom scripts)? What's the minimum viable eval for a new agent? What do scoring rubrics look like, and what makes a good LM judge?</p>
+    </div>
+    <div class="answer">
+      <h4>Answer</h4>
+      <p><strong>An eval is just three pieces: a dataset, a task, and a scorer.</strong> A dataset of inputs (optionally with reference answers), a task that runs your agent on each one, and one or more scorers that return a number from 0 to 1. Tools like Braintrust or LangSmith are a convenience layer around that loop — a plain <code>for</code> loop with asserts is already a legitimate eval. The whole thing in Braintrust:</p>
+      <pre style="background:#e6efe9; border-radius:6px; padding:14px 16px; font-size:12.5px; line-height:1.55; overflow-x:auto; margin:8px 0 14px; color:#202124;">from braintrust import Eval
+from autoevals import Factuality
+
+Eval(
+    "support-agent",                      # project
+    data=lambda: [                        # 1. dataset: input + reference
+        {"input": "Reset my password", "expected": "Sends a reset link"},
+        {"input": "Cancel my plan",    "expected": "Routes to billing"},
+    ],
+    task=lambda q: my_agent(q),           # 2. the agent under test
+    scores=[Factuality],                  # 3. scorer(s), each returns 0..1
+)</pre>
+      <p>Three things turn that skeleton into something that actually holds the line:</p>
+      <ol>
+        <li><strong>Start tiny, from real failures.</strong> The minimum viable eval is 10–20 hand-written cases drawn from bugs you've actually seen — not 1,000 synthetic ones. Each case is an input plus what "correct" means. Run it on every change; a drop is a red bar. This is "<em>set the bar at the eval, not the demo</em>" in practice — the suite proves the agent succeeds reliably, not that it worked once.</li>
+        <li><strong>Prefer code-based scorers; reserve the LM judge for the fuzzy stuff.</strong> If you can check it deterministically — exact match, regex, valid JSON schema, "did it call the right tool," "did the tests pass," "is the number right" — do that. It's free, fast, and not gameable. Only reach for an LM judge when correctness is genuinely subjective: tone, helpfulness, "did it actually answer the question."</li>
+        <li><strong>A good LM judge has a written rubric, not a vibe.</strong> Give it discrete grades mapped to scores (A / B / C → <code>1 / 0.5 / 0</code>), not "rate 1–10" — models can't reliably tell a 6 from a 7. Make it reason before it grades (chain-of-thought), pin the judge model so scores don't drift, and calibrate against a handful of human-labeled examples. Pairwise ("is A or B better?") beats absolute scoring. And grade against the requirement, not the model's own assumptions.</li>
+      </ol>
+      <p><strong>Tooling:</strong> start with a script. Graduate to <code>Braintrust</code> or <code>LangSmith</code> when you need to track scores across runs, diff regressions, store datasets, and share results — i.e. when the eval becomes a team asset instead of a one-off check. (Also in the space: OpenAI Evals, Inspect, promptfoo.)</p>
     </div>
   </div>
 
