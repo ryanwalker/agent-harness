@@ -601,6 +601,30 @@
       <div class="pullquote" style="margin-top:32px;">"Generation is solved. Verification, judgment, and direction are the new craft."</div>
     </div>
 
+    <div class="section">
+      <div class="section-tag">Open Questions</div>
+      <h2>What the Whitepaper Left Thin</h2>
+      <p>Four things the paper names as essential but doesn't show you how to build. Each is worked through in full in the companion <a href="questions.html" style="color:#1a73e8; font-weight:600; text-decoration:none; border-bottom:1px solid rgba(26,115,232,0.35);">open-questions Q&amp;A →</a></p>
+      <div class="principles">
+        <div class="principle">
+          <div class="principle-num">1</div>
+          <div class="principle-body"><strong>Testing — how do you stop an agent from gaming its own tests?</strong><p>Separate the test-author from the code-author, prove the tests fail first (red), then lock them read-only so the agent can't quietly weaken them.</p></div>
+        </div>
+        <div class="principle">
+          <div class="principle-num">2</div>
+          <div class="principle-body"><strong>Evals — how do you actually set one up?</strong><p>An eval is just a dataset + a task + a scorer. Start with 10–20 cases drawn from real failures; prefer deterministic code-based scorers and reserve LM-judges (with a written rubric) for genuinely subjective calls.</p></div>
+        </div>
+        <div class="principle">
+          <div class="principle-num">3</div>
+          <div class="principle-body"><strong>Context — how do the six context types get loaded?</strong><p>Decide what's always-on vs. fetched-on-demand: universal rules in AGENTS.md, situational know-how in skills (triggered when the model reads their description), and large knowledge pulled in via RAG.</p></div>
+        </div>
+        <div class="principle">
+          <div class="principle-num">4</div>
+          <div class="principle-body"><strong>Orchestration — how do hand-offs and routing work?</strong><p>Sub-agents run in isolated contexts and return summaries; specialists hand off through shared artifacts (A2A between separate services, MCP for tools). Route rule-based first, and keep the control flow deterministic.</p></div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
   <div class="doc-footer">Summary of: <em>The New SDLC With Vibe Coding</em> (Google Whitepaper, May 2026) &amp; Addy Osmani's companion blog post.</div>
@@ -858,13 +882,36 @@
       <div class="s-quote" style="margin-top:28px;font-size:18px;"><em>Generation is solved. Verification, judgment, and direction are the new craft.</em></div>
     </div>
 
+    <!-- SLIDE 14: Open Questions -->
+    <div class="slide slide-main">
+      <div class="s-eyebrow">Going Deeper</div>
+      <div class="s-h2">Open Questions the Paper Left Thin</div>
+      <div class="s-two-col" style="margin-top:24px;">
+        <div class="s-card">
+          <h4 class="blue">Verification</h4>
+          <ul>
+            <li><strong style="color:#fff;">Stop an agent gaming its own tests?</strong> Separate the test-author from the code-author, prove the tests fail first (red), then lock them read-only.</li>
+            <li><strong style="color:#fff;">Actually set up evals?</strong> Dataset + task + scorer; 10–20 real-failure cases; code-based scorers first, LM-judge (with a rubric) for subjective calls.</li>
+          </ul>
+        </div>
+        <div class="s-card">
+          <h4 class="green">Harness</h4>
+          <ul>
+            <li><strong style="color:#fff;">Load the six context types?</strong> Always-on vs. on-demand: AGENTS.md for universal rules, skills (description-triggered) for situational, RAG for knowledge.</li>
+            <li><strong style="color:#fff;">Hand-offs &amp; model routing?</strong> Isolated sub-agents return summaries; hand off via artifacts (A2A across services, MCP for tools); route rule-based first; keep control flow deterministic.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="s-body" style="margin-top:18px;">Each is worked through in full in the companion <strong style="color:#fff;">questions.html</strong>.</div>
+    </div>
+
   </div><!-- /slide-track -->
 
   <!-- PRESENTER BAR -->
   <div id="pres-bar">
     <button class="pres-nav" id="btn-prev" onclick="changeSlide(-1)" disabled>&#8592;</button>
     <div id="slide-progress"><div id="slide-progress-fill"></div></div>
-    <div id="slide-counter">1 / 14</div>
+    <div id="slide-counter">1 / 15</div>
     <button class="pres-nav" id="btn-next" onclick="changeSlide(1)">&#8594;</button>
   </div>
 </div><!-- /pres-view -->
